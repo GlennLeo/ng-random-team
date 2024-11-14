@@ -1,0 +1,24 @@
+<section class="bg-gray-100 dark:bg-gray-900 py-10 px-12">
+  <div class="grid grid-cols-4 gap-4">
+    @for (boardSession of boardSessions; track boardSession.id) {
+    <div
+      class="grid grid-cols-2 justify-center sm:w-full mx-auto border-2 border-sky-400 p-2 divide-x divide-sky-400 rounded w-[100px]"
+    >
+      <app-board-column
+        [teamName]="'Team 1'"
+        [score]="getTeam1Score(boardSession)"
+        [memberList]="getMemberTeam1(boardSession)"
+        [win]="getWinningTeam(boardSession) === 1"
+        [isSmall]="true"
+      ></app-board-column>
+      <app-board-column
+        [teamName]="'Team 2'"
+        [score]="getTeam2Score(boardSession)"
+        [memberList]="getMemberTeam2(boardSession)"
+        [win]="getWinningTeam(boardSession) === 2"
+        [isSmall]="true"
+      ></app-board-column>
+    </div>
+    }
+  </div>
+</section>

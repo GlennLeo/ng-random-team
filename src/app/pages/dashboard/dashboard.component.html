@@ -1,0 +1,178 @@
+<nav class="border-gray-200 mb-4">
+  <div
+    class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-1"
+  >
+    <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+      <img
+        src="https://play-lh.googleusercontent.com/exuYa1JdrP7QMws6SSA7sKGTOVFNeuoyOjvT4vEr7pIPoNYb71kmBjonNxSFPzjdBtA"
+        class="h-8"
+        alt="aoe"
+      />
+      <span
+        class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
+        >Age of empires</span
+      >
+    </a>
+    <div class="w-auto block" id="navbar-default">
+      <ul
+        class="font-medium flex p-4 mt-4 border border-gray-100 rounded-lg flex-row space-x-8 rtl:space-x-reverse mt-0 border-0"
+      >
+        <li>
+          <a
+            href="/history"
+            class="block py-2 px-3 rounded border-0 hover:text-blue-700 md:p-0 hover:text-blue-500 hover:text-sky-500 hover:bg-transparent text-white"
+            >History</a
+          >
+        </li>
+        <li>
+          <a
+            href="/edit"
+            class="block py-2 px-3 rounded border-0 hover:text-blue-700 md:p-0 hover:text-blue-500 hover:text-sky-500 hover:bg-transparent text-white"
+            >Edit</a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<form
+  #form="ngForm"
+  class="bg-slate-900 w-full h-full mx-auto"
+  (ngSubmit)="onSubmit()"
+>
+  <div class="flex flex-col justify-center items-center">
+    <div id="container" class="flex-auto">
+      <div
+        class="grid grid-cols-2 justify-center sm:w-full md:w-[700px] mx-auto border-2 border-sky-400 p-2 divide-x divide-sky-400 rounded"
+      >
+        <app-board-column
+          [teamName]="'Team 1'"
+          [score]="getTeam1Score()"
+          [memberList]="getMemberTeam1()"
+        ></app-board-column>
+        <app-board-column
+          [teamName]="'Team 2'"
+          [score]="getTeam2Score()"
+          [memberList]="getMemberTeam2()"
+        ></app-board-column>
+      </div>
+      @if (getMemberTeam1().length && getMemberTeam2().length && !done) {
+      <div class="flex justify-center items-center gap-4 mt-4">
+        <app-ng-button
+          buttonText="Start"
+          buttonType="button"
+          (buttonClick)="onStart()"
+          [disabled]="['confirmed', 'finished'].includes(sessionStatus)"
+        ></app-ng-button>
+        <app-ng-button
+          buttonText="Finish"
+          buttonType="button"
+          (buttonClick)="onFinish()"
+          [disabled]="sessionStatus === 'finished' || secret !== 'dungcohoi'"
+        ></app-ng-button>
+      </div>
+      } @if (sessionStatus === 'finished') {
+      <div class="flex items-center justify-center gap-4">
+        <label
+          htmlFor="countries"
+          class="block mb-2 text-sm font-medium text-white"
+        >
+          Đội thắng:
+        </label>
+        <select
+          id="countries"
+          class="bg-black border border-gray-300 text-white text-sm rounded-lg block p-2.5 b placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500 w-[100px]"
+          [(ngModel)]="winningTeam"
+          [name]="'winningTeam'"
+        >
+          <option value="1">1</option>
+          <option value="2">2</option>
+        </select>
+
+        <app-ng-button
+          buttonText="Submit"
+          buttonType="button"
+          (buttonClick)="updateWinningTeam()"
+        ></app-ng-button>
+      </div>
+      }
+      <div class="rounded px-8 pb-4">
+        @for (attendee of attendance; track $index) {
+        <input
+          type="hidden"
+          [name]="'members' + $index"
+          [(ngModel)]="attendee.name"
+        />
+        }
+        <fieldset class="mt-20 mb-4 sm:w-full md:w-[850px] mx-auto">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center justify-center gap-4">
+              <label
+                htmlFor="countries"
+                class="block mb-2 text-sm font-medium text-white"
+              >
+                Kèo:
+              </label>
+              <select
+                id="countries"
+                class="bg-black border border-gray-300 text-white text-sm rounded-lg block p-2.5 b placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500 w-[100px]"
+                [(ngModel)]="teamSize"
+                [name]="'teamSize'"
+              >
+                <option value="8">4-4</option>
+                <option value="6">3-3</option>
+              </select>
+            </div>
+            <div class="flex items-center justify-center gap-4">
+              <p class="text-white text-center vertical-align">
+                Số người đã chọn: {{ totalAttendees() }}
+              </p>
+            </div>
+          </div>
+          <div class="flex flex-wrap justify-between gap-8 mb-4 mx-auto">
+            @for (attendee of attendance; track $index) {
+            <div key="{name}" class="flex">
+              <input
+                type="checkbox"
+                [id]="'checkbox-' + attendee.name"
+                [name]="'members' + $index"
+                [(ngModel)]="attendee.checked"
+                [checked]="attendee.checked"
+                [disabled]="isDisabled(attendee)"
+                class="peer hidden"
+              />
+              <label
+                [for]="'checkbox-' + attendee.name"
+                class="ms-2 text-sm text-white select-none cursor-pointer rounded-lg border-2 py-3 px-6 font-bold transition-colors duration-200 ease-in-out peer-checked:border-4 peer-checked:border-double peer-checked:text-white peer-checked:border-sky-400 peer-checked:bg-sky-400 peer-checked:bg-opacity-30 peer-checked:hover:bg-opacity-10 hover:border-sky-400 hover:border-double peer-disabled:opacity-40 peer-disabled:text-white peer-disabled:hover:border-white w-[120px] text-center bg-opacity-25"
+              >
+                {{ attendee.name }}
+              </label>
+            </div>
+            }
+          </div>
+        </fieldset>
+      </div>
+    </div>
+    <div class="w-[200px] space-y-4">
+      <app-ng-button
+        buttonText="Chia Team"
+        buttonType="button"
+        (buttonClick)="onGenTeam()"
+        [disabled]="checkSessionLocked()"
+      ></app-ng-button>
+      <app-ng-button
+        buttonText="Chia Quân"
+        buttonType="button"
+        (buttonClick)="onGenHero()"
+        [disabled]="checkSessionLocked()"
+      ></app-ng-button>
+      <input
+        [(ngModel)]="secret"
+        name="secret"
+        type="password"
+        class="bg-gray-400 shadow appearance-none rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+      />
+    </div>
+  </div>
+</form>
