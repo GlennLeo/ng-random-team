@@ -176,4 +176,15 @@ export class SupabaseService {
       console.log('Session status updated:', data);
     }
   }
+
+  async getStatisticOfPlayer(playerId: number) {
+    const { data, error } = await this.supabase.rpc('player_statistic', {
+      player_id_input: playerId,
+    });
+    if (error) {
+      console.error('Error fetching grouped sessions:', error);
+      return [];
+    }
+    return data;
+  }
 }

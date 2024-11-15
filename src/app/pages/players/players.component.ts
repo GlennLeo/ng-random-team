@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { SupabaseService } from '../../services/supabase.service';
 import { Player } from '../../models/Player';
-import { extend, mean } from 'lodash';
+import { mean } from 'lodash';
 
 interface PlayerWithScore extends Player {
   score: number;
