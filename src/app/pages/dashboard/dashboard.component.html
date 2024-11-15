@@ -9,7 +9,7 @@
         alt="aoe"
       />
       <span
-        class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
+        class="self-center text-2xl font-semibold whitespace-nowrap text-white"
         >Age of empires</span
       >
     </a>
@@ -20,13 +20,23 @@
         <li>
           <a
             href="/history"
+            target="#"
             class="block py-2 px-3 rounded border-0 hover:text-blue-700 md:p-0 hover:text-blue-500 hover:text-sky-500 hover:bg-transparent text-white"
             >History</a
           >
         </li>
         <li>
           <a
+            href="/players"
+            target="#"
+            class="block py-2 px-3 rounded border-0 hover:text-blue-700 md:p-0 hover:text-blue-500 hover:text-sky-500 hover:bg-transparent text-white"
+            >Players</a
+          >
+        </li>
+        <li>
+          <a
             href="/edit"
+            target="#"
             class="block py-2 px-3 rounded border-0 hover:text-blue-700 md:p-0 hover:text-blue-500 hover:text-sky-500 hover:bg-transparent text-white"
             >Edit</a
           >
@@ -139,7 +149,7 @@
                 [name]="'members' + $index"
                 [(ngModel)]="attendee.checked"
                 [checked]="attendee.checked"
-                [disabled]="isDisabled(attendee)"
+                [disabled]="isDisabled(attendee) || checkSessionLocked()"
                 class="peer hidden"
               />
               <label

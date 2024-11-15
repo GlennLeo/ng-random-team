@@ -4,7 +4,7 @@ import { Attendee, TeamMember } from '../../models/Player';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
 import { CommonModule } from '@angular/common';
-import { mean } from 'lodash';
+import { mean, round } from 'lodash';
 import { PlayersService } from '../../services/players.service';
 import { NgButtonComponent } from '../../shared/button/ng-button/ng-button.component';
 import { updateAttendance } from '../../lib/utils';
@@ -85,10 +85,16 @@ export class DashboardComponent implements OnInit {
     return this.memberList.filter((mem) => mem.team === 2);
   }
   getTeam1Score() {
-    return this.getMemberTeam1().reduce((acc, member) => acc + member.score, 0);
+    return round(
+      this.getMemberTeam1().reduce((acc, member) => acc + member.score, 0),
+      1
+    );
   }
   getTeam2Score() {
-    return this.getMemberTeam2().reduce((acc, member) => acc + member.score, 0);
+    return round(
+      this.getMemberTeam2().reduce((acc, member) => acc + member.score, 0),
+      1
+    );
   }
 
   async onGenTeam() {
