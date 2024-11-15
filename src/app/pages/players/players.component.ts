@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { SupabaseService } from '../../services/supabase.service';
 import { Player } from '../../models/Player';
 import { mean } from 'lodash';
+import { RouterLink } from '@angular/router';
 
 interface PlayerWithScore extends Player {
   score: number;
@@ -10,7 +11,7 @@ interface PlayerWithScore extends Player {
 @Component({
   selector: 'app-players',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './players.component.html',
   styleUrl: './players.component.css',
 })
