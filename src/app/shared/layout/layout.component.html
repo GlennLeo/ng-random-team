@@ -1,0 +1,50 @@
+<nav class="border-gray-200 mb-4">
+  <div
+    class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-1"
+  >
+    <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+      <img
+        src="https://play-lh.googleusercontent.com/exuYa1JdrP7QMws6SSA7sKGTOVFNeuoyOjvT4vEr7pIPoNYb71kmBjonNxSFPzjdBtA"
+        class="h-8"
+        alt="aoe"
+      />
+      <span
+        class="self-center text-2xl font-semibold whitespace-nowrap text-white"
+        >Age of empires</span
+      >
+    </a>
+    <div class="w-auto block" id="navbar-default">
+      <ul
+        class="font-medium flex p-4 mt-4 border border-gray-100 rounded-lg flex-row space-x-8 rtl:space-x-reverse mt-0 border-0"
+      >
+        <li>
+          <a
+            href="/history"
+            target="#"
+            class="block py-2 px-3 rounded border-0 hover:text-blue-700 md:p-0 hover:text-blue-500 hover:text-sky-500 hover:bg-transparent text-white"
+            >History</a
+          >
+        </li>
+        <li>
+          <a
+            href="/players"
+            target="#"
+            class="block py-2 px-3 rounded border-0 hover:text-blue-700 md:p-0 hover:text-blue-500 hover:text-sky-500 hover:bg-transparent text-white"
+            >Players</a
+          >
+        </li>
+        <li>
+          <a
+            href="/edit"
+            target="#"
+            class="block py-2 px-3 rounded border-0 hover:text-blue-700 md:p-0 hover:text-blue-500 hover:text-sky-500 hover:bg-transparent text-white"
+            >Edit</a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<main class="bg-slate-900 h-full w-full">
+  <router-outlet />
+</main>

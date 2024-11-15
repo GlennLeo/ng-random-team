@@ -260,7 +260,6 @@ export class PlayersService {
     team1: TeamMember[],
     team2: TeamMember[]
   ) => {
-    return;
     const now = new Date().toLocaleString('en-US', {
       timeZone: 'Asia/Bangkok',
     });

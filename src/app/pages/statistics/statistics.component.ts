@@ -4,6 +4,13 @@ import { ActivatedRoute } from '@angular/router';
 import { HeroStatistic, PlayerStatistics } from '../../models/Statistic';
 import { CommonModule } from '@angular/common';
 
+const quotes = [
+  'Chưa tài đâu!!!',
+  'Cũng ghê đấy!!!',
+  'Tạm được!!!',
+  'CŨng thường thôi!!!',
+];
+
 @Component({
   selector: 'app-statistics',
   standalone: true,
@@ -15,13 +22,14 @@ export class StatisticsComponent implements OnInit {
   private readonly supabase = inject(SupabaseService);
   private readonly route = inject(ActivatedRoute);
   id: string | number | null = null;
+  quote = '';
   statistic: PlayerStatistics | null = null;
   constructor() {}
 
   async ngOnInit(): Promise<void> {
+    this.quote = quotes[Math.floor(Math.random() * quotes.length)];
     this.route.paramMap.subscribe((params) => {
       this.id = params.get('playerId'); // Get 'id' parameter
-      console.log(this.id);
     });
     if (this.id) {
       const data = await this.supabase.getStatisticOfPlayer(+this.id);
