@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -5,7 +6,8 @@ import { AuthService } from '../../services/auth.service';
 @Component({
     selector: 'app-auth',
     standalone: true,
-    templateUrl: './auth.component.html'
+    templateUrl: './auth.component.html',
+    imports: [CommonModule]
 })
 export class AuthComponent implements OnInit {
 
