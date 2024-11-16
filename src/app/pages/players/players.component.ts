@@ -27,8 +27,7 @@ export class PlayersComponent implements OnInit {
         this.players = data
           .filter((player) => player.name !== 'Phantom')
           .map((player) => ({
-            ...player,
-            score: mean(player.scores),
+            ...player
           }));
       }
     } catch (error) {}

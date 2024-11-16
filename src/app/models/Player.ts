@@ -1,12 +1,11 @@
 export class Player {
   id: number = 0;
   name: string = '';
-  scores: number[] = [];
+  score : number = 0;
 }
 
 export class Attendee extends Player {
   checked: boolean = false;
-  score: number = 0;
 }
 
 export class TeamMember {
@@ -15,6 +14,7 @@ export class TeamMember {
   name: string = '';
   score: number = 0;
   team: number = 0;
+  civId? : number;
 }
 
 export interface PlayerSession {

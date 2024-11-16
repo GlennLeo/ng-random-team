@@ -2,12 +2,12 @@ import { Component, inject, OnInit } from '@angular/core';
 import { BoardColumnComponent } from '../../shared/board-column/board-column.component';
 import { Attendee, TeamMember } from '../../models/Player';
 import { FormsModule } from '@angular/forms';
-import { SupabaseService } from '../../services/supabase.service';
 import { CommonModule } from '@angular/common';
-import { mean, round } from 'lodash';
+import { round } from 'lodash';
 import { PlayersService } from '../../services/players.service';
 import { NgButtonComponent } from '../../shared/button/ng-button/ng-button.component';
-import { updateAttendance } from '../../lib/utils';
+import { ClientDataService } from '../../services/data.service';
+import { Civilization } from '../../models/Civilization';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,33 +19,22 @@ import { updateAttendance } from '../../lib/utils';
 export class DashboardComponent implements OnInit {
   attendance: Attendee[] = [];
   memberList: TeamMember[] = [];
+  civilizations: Civilization[] = [];
   teamSize = 8;
-  sessionId = 0;
+  sessionId = '';
   sessionStatus = '';
   winningTeam = 0;
   done = false;
   secret = '';
 
-  private readonly supabase = inject(SupabaseService);
   private readonly playerService = inject(PlayersService);
+  private readonly dataService = inject(ClientDataService);
 
-  constructor() {}
+  constructor() { }
 
   async ngOnInit(): Promise<void> {
     await this.getPlayers();
-    const latestBoard = (await this.supabase.getLastedBoard()) as any[];
-    if (latestBoard) {
-      this.memberList = latestBoard.map((item) => ({
-        id: item.player_id.id,
-        name: item.player_id.name,
-        hero: item.hero,
-        score: mean(item.player_id.scores),
-        team: +item.team,
-      }));
-      this.attendance = updateAttendance(this.attendance, this.memberList);
-      this.sessionId = latestBoard[0]?.session_id.id;
-      this.sessionStatus = latestBoard[0]?.session_id.status;
-    }
+    this.civilizations = await this.dataService.getCivilizations();
   }
 
   getAttendance() {
@@ -54,15 +43,14 @@ export class DashboardComponent implements OnInit {
 
   async getPlayers() {
     try {
-      const { data } = await this.supabase.getPlayers();
-      if (data) {
-        this.attendance = data.map((item) => ({
+      const players = await this.dataService.getPlayers();
+      if (players) {
+        this.attendance = players.map((item) => ({
           ...item,
-          checked: false,
-          score: mean(item.scores),
+          checked: false
         }));
       }
-    } catch (error) {}
+    } catch (error) { }
   }
 
   isDisabled(attendee: Attendee): boolean {
@@ -75,7 +63,7 @@ export class DashboardComponent implements OnInit {
     return selectedCount;
   }
 
-  async onSubmit() {}
+  async onSubmit() { }
 
   getMemberTeam1() {
     return this.memberList.filter((mem) => mem.team === 1);
@@ -102,52 +90,39 @@ export class DashboardComponent implements OnInit {
     const data = await this.playerService.generateTeams(
       this.teamSize,
       this.getAttendance().map((a) => ({
-        ...a,
-        score: mean(a.scores),
-      }))
+        ...a
+      })),
+      this.civilizations
     );
     this.memberList = data.team;
-    const session = await this.supabase.createSession();
-    this.sessionId = session.id;
-    localStorage.setItem('sessionId', session.id);
+    this.sessionStatus = 'ready';
   }
 
   async onGenHero() {
     this.done = false;
-    const data = await this.playerService.generateHeroes(this.memberList);
+    const data = await this.playerService.generateCivilizations(this.memberList, this.civilizations);
     this.memberList = data.team;
-    const session = await this.supabase.createSession();
-    this.sessionId = session.id;
-    localStorage.setItem('sessionId', session.id);
+    this.sessionStatus = 'ready';
   }
 
   async onStart() {
-    // update session to confirmed
-    this.supabase.updateSessionStatus(this.sessionId, 'confirmed');
-
+    const submitPlayerList = this.memberList.map(m => ({
+      playerId : m.id,
+      civId : m.civId,
+      team : m.team
+    }));
+    await this.dataService.createSession({ players: submitPlayerList});
     this.sessionStatus = 'confirmed';
-    // create player session
-    this.supabase.createPlayerSession(this.sessionId, this.memberList);
   }
+
   async onFinish() {
-    // update session to finished and winning team
-    this.supabase.updateSessionStatus(this.sessionId, 'finished');
-    this.sessionStatus = 'finished';
-  }
-  async updateWinningTeam() {
-    await this.supabase.updateSessionWinningTeam(
-      this.sessionId,
-      this.winningTeam
-    );
     this.sessionStatus = '';
-    this.done = true;
+    this.memberList = [];
+    this.attendance.forEach(a => a.checked = false);
+    
   }
 
   checkSessionLocked() {
-    return (
-      this.sessionStatus === 'confirmed' ||
-      (this.sessionStatus === 'finished' && !this.done) ||
-      this.secret !== 'dungcohoi'
-    );
+    return this.sessionStatus === 'confirmed';
   }
 }

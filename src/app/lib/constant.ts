@@ -19,23 +19,5 @@ export const team = [
   { name: 'Phantom', score: 0 },
 ];
 
-export const heroes = [
-  { name: 'Egyptian', tier: 1 },
-  { name: 'Hittite', tier: 1 },
-  { name: 'Yamato', tier: 1 },
-  { name: 'Shang', tier: 1 },
-  { name: 'Phoenician', tier: 2 },
-  { name: 'Roman', tier: 2 },
-  { name: 'Assyrian', tier: 2 },
-  { name: 'Sumerian', tier: 2 },
-  { name: 'Palmyran', tier: 3 },
-  { name: 'Persian', tier: 3 },
-  { name: 'Macedonia', tier: 3 },
-  { name: 'Babylonian', tier: 3 },
-  { name: 'Minoan', tier: 4 },
-  { name: 'Choson', tier: 4 },
-  { name: 'Carthaginian', tier: 4 },
-  { name: 'Greek', tier: 4 },
-];
 
 export const teamNames = shuffle(team.map((member) => member.name));

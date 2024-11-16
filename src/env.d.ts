@@ -8,6 +8,8 @@ declare interface Env {
   readonly NG_APP_PUBLIC_SUPABASE_ANON_KEY: string;
   readonly NG_APP_PUBLIC_GG_TOKEN: string;
   readonly NG_APP_PUBLIC_GG_KEY: string;
+  readonly NG_APP_PUBLIC_GG_AUTH_CLIENT_ID: string;
+  readonly NG_APP_PUBLIC_API_SERVER_URL: string;
 }
 
 // Choose how to access the environment variables.

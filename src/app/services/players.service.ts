@@ -1,18 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Attendee, TeamMember } from '../models/Player';
 import { shuffle } from 'lodash';
-import { environment } from '../../environments/environment';
-import { heroes } from '../lib/constant';
+import { Civilization } from '../models/Civilization';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PlayersService {
-  selectedHeroes = new Set(); // Keep track of already selected heroes
+  selectedCivs = new Set(); // Keep track of already selected heroes
 
   constructor() {}
 
-  generateTeams = async (teamSize: number, attendance: Attendee[]) => {
+  generateTeams = async (teamSize: number, attendance: Attendee[], civilizations : Civilization[]) => {
     let bestTeams: {
       team1: TeamMember[];
       team2: TeamMember[];
@@ -38,48 +37,48 @@ export class PlayersService {
     }
 
     const { team1, team2 } = bestTeams;
-    const hero1 = this.selectTeam();
-    const hero2 = this.selectTeam();
-    const team1WithHero = team1.map((person, index) => ({
+    const civListForTeam1 = this.selectTeam(civilizations);
+    const civListForTeam2  = this.selectTeam(civilizations);
+    const team1WithCiv = team1.map((person, index) => ({
       ...person,
       team: 1,
-      hero: hero1[index].name,
+      hero: civListForTeam1[index].name,
+      civId : civListForTeam1[index].id
     })) as TeamMember[];
-    const team2WithHero = team2.map((person, index) => ({
+    const team2WithCiv = team2.map((person, index) => ({
       ...person,
       team: 2,
-      hero: hero2[index].name,
+      hero: civListForTeam2[index].name,
+      civId : civListForTeam2[index].id
     }));
-    console.log({ team1WithHero });
-    console.log({ team2WithHero });
-    this.handleSendWebhookMessage(team1WithHero, team2WithHero);
+    this.handleSendWebhookMessage(team1WithCiv, team2WithCiv);
     return {
-      team: [...team1WithHero, ...team2WithHero],
+      team: [...team1WithCiv, ...team2WithCiv],
     };
   };
 
-  generateHeroes = async (memberList: TeamMember[]) => {
-    const hero1 = this.selectTeam();
-    const hero2 = this.selectTeam();
-    const team1WithHero = memberList
+  generateCivilizations = async (memberList: TeamMember[], civilizations : Civilization[]) => {
+    const hero1 = this.selectTeam(civilizations);
+    const hero2 = this.selectTeam(civilizations);
+    const team1WithCiv = memberList
       .filter((mem) => mem.team === 1)
       .map((person, index) => ({
         ...person,
         team: 1,
         hero: hero1[index].name,
+        civId : hero1[index].id
       })) as TeamMember[];
-    const team2WithHero = memberList
+    const team2WithCiv = memberList
       .filter((mem) => mem.team === 2)
       .map((person, index) => ({
         ...person,
         team: 2,
         hero: hero2[index].name,
+        civId : hero2[index].id
       }));
-    console.log({ team1WithHero });
-    console.log({ team2WithHero });
-    this.handleSendWebhookMessage(team1WithHero, team2WithHero);
+    this.handleSendWebhookMessage(team1WithCiv, team2WithCiv);
     return {
-      team: [...team1WithHero, ...team2WithHero],
+      team: [...team1WithCiv, ...team2WithCiv],
     };
   };
 
@@ -314,49 +313,49 @@ export class PlayersService {
     }
   }
 
-  private getHeroesByTier(tier: number) {
-    return heroes.filter((hero) => hero.tier === tier);
+  private getCivilizationsByTier(tier: number, civList : Civilization[]) {
+    return civList.filter((c) => c.tier === tier);
   }
 
-  private getRandomHero(tier: number) {
-    const tierHeroes = this.getHeroesByTier(tier);
-    const availableHeroes = tierHeroes.filter(
-      (hero) => !this.selectedHeroes.has(hero.name)
+  private getRandomCivilization(tier: number, civList : Civilization[]) {
+    const tierCivs = this.getCivilizationsByTier(tier, civList);
+    const availableCivs = tierCivs.filter(
+      (c) => !this.selectedCivs.has(c.name)
     );
 
     // 70% chance to select a unique hero, 30% chance to allow duplicates
-    const useUniqueHero = Math.random() < 0.65;
+    const useUniqueCiv = Math.random() < 0.65;
 
-    if (useUniqueHero && availableHeroes.length > 0) {
+    if (useUniqueCiv && availableCivs.length > 0) {
       // Select from heroes not already picked
-      const randomIndex = Math.floor(Math.random() * availableHeroes.length);
-      return availableHeroes[randomIndex];
+      const randomIndex = Math.floor(Math.random() * availableCivs.length);
+      return availableCivs[randomIndex];
     } else {
       // Allow duplicates (pick from all heroes in the tier)
-      const randomIndex = Math.floor(Math.random() * tierHeroes.length);
-      return tierHeroes[randomIndex];
+      const randomIndex = Math.floor(Math.random() * tierCivs.length);
+      return tierCivs[randomIndex];
     }
   }
 
   // Hero selection logic based on tier rules
-  selectTeam() {
-    this.selectedHeroes.clear(); // Clear previously selected heroes
+  selectTeam(civList : Civilization[]) {
+    this.selectedCivs.clear(); // Clear previously selected heroes
 
     const firstTier = Math.floor(Math.random() * 4) + 1;
     const secondTier = 5 - firstTier;
     const thirdTier = Math.floor(Math.random() * 4) + 1;
     const fourthTier = 5 - thirdTier;
 
-    const firstHero = this.getRandomHero(firstTier);
-    this.selectedHeroes.add(firstHero.name);
-    const secondHero = this.getRandomHero(secondTier);
-    this.selectedHeroes.add(secondHero.name);
-    const thirdHero = this.getRandomHero(thirdTier);
-    this.selectedHeroes.add(thirdHero.name);
-    const fourthHero = this.getRandomHero(fourthTier);
-    this.selectedHeroes.add(fourthHero.name);
+    const firstCiv = this.getRandomCivilization(firstTier, civList);
+    this.selectedCivs.add(firstCiv.name);
+    const secondCiv = this.getRandomCivilization(secondTier, civList);
+    this.selectedCivs.add(secondCiv.name);
+    const thirdCiv = this.getRandomCivilization(thirdTier, civList);
+    this.selectedCivs.add(thirdCiv.name);
+    const fourthCiv = this.getRandomCivilization(fourthTier, civList);
+    this.selectedCivs.add(fourthCiv.name);
 
-    const team = [firstHero, secondHero, thirdHero, fourthHero];
+    const team = [firstCiv, secondCiv, thirdCiv, fourthCiv];
     return team;
   }
 }
