@@ -1,31 +1,55 @@
 <section class="bg-gray-100 dark:bg-gray-900 p-2">
+  <div [hidden]="true" class="text-green-500 text-red-500"></div>
   <h2 class="flex flex-row flex-nowrap items-center mb-8">
     <span
-      class="flex-none block mx-4 px-4 py-2.5 text-3xl rounded leading-none font-medium text-white"
+      class="flex-none block mx-4 px-4 py-2.5 text-3xl rounded leading-none font-medium text-white mx-auto"
     >
-      History
+      Lịch sử trận đấu
     </span>
   </h2>
-  <div class="grid grid-cols-4 gap-4">
-    @for (boardSession of boardSessions; track boardSession.id) {
-    <div
-      class="grid grid-cols-2 justify-center sm:w-full mx-auto border-2 border-sky-400 p-2 divide-x divide-sky-400 rounded w-[100px]"
+
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg container mx-auto">
+    <table
+      class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
     >
-      <app-board-column
-        [teamName]="'Team 1'"
-        [score]="getTeam1Score(boardSession)"
-        [memberList]="getMemberTeam1(boardSession)"
-        [win]="getWinningTeam(boardSession) === 1"
-        [isSmall]="true"
-      ></app-board-column>
-      <app-board-column
-        [teamName]="'Team 2'"
-        [score]="getTeam2Score(boardSession)"
-        [memberList]="getMemberTeam2(boardSession)"
-        [win]="getWinningTeam(boardSession) === 2"
-        [isSmall]="true"
-      ></app-board-column>
-    </div>
-    }
+      <thead
+        class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+      >
+        <tr>
+          <th scope="col" class="px-6 py-3">Ngày giờ</th>
+          <th scope="col" class="px-6 py-3">Quân</th>
+          <th scope="col" class="px-6 py-3">Người quay</th>
+          <th scope="col" class="px-6 py-3" [hidden]="!isAdmin">
+            <span class="sr-only">Edit</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (session of data; track session.id) {
+        <tr
+          class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+        >
+          <th
+            scope="row"
+            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+          >
+            {{ session.createdAt | formatDate:'DD/MM/YYYY HH:mm' }}
+          </th>
+          <td class="px-6 py-4">
+            <div [innerHTML]="getSummary(session)"></div>
+          </td>
+          <td class="px-6 py-4">{{ session.createdBy }}</td>
+          <td class="px-6 py-4 text-right">
+            <a
+              href="javascript:void(0)"
+              class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+              (click)="openEditDialog(session)"
+              >Cập nhật</a
+            >
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
   </div>
 </section>

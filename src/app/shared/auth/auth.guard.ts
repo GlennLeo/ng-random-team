@@ -14,6 +14,7 @@ export class AuthGuard implements CanActivate {
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot
     ): Observable<boolean> | Promise<boolean> | boolean {
+        if (typeof localStorage === 'undefined') return false;
         const token = localStorage.getItem('access_token');
 
         if (!token) {

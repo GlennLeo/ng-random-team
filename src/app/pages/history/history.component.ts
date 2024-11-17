@@ -1,65 +1,69 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { BoardSession } from '../../models/Board';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { GameSession } from '../../models/Session';
+import { FormatDatePipe } from '../../pipes/formatdate.pipes';
+import { ContextService } from '../../services/context.service';
+import { ClientDataService } from '../../services/data.service';
 import { BoardColumnComponent } from '../../shared/board-column/board-column.component';
-import { SupabaseService } from '../../services/supabase.service';
-import { mean, round } from 'lodash';
+import { UpdateGameSessionDialogComponent } from './update-session-dialog.component';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [BoardColumnComponent],
+  imports: [BoardColumnComponent, FormatDatePipe],
   templateUrl: './history.component.html',
   styleUrl: './history.component.css',
 })
 export class HistoryComponent implements OnInit {
-  boardSessions: BoardSession[] = [];
-  private readonly supabase = inject(SupabaseService);
-  constructor() {}
+  isAdmin: boolean = false;
+  data: GameSession[] = [];
+  constructor(private dataService: ClientDataService, private contextService: ContextService, private dialog: MatDialog) { }
 
   async ngOnInit(): Promise<void> {
-    const data = await this.supabase.getBoardList();
-    this.boardSessions = data.map((item: any) => ({
-      id: item.id,
-      team: item.players.map((player: any) => ({
-        id: player.player_id,
-        name: player.name,
-        hero: player.hero,
-        score: mean(player.scores),
-        team: +player.team,
-      })),
-      winningTeam: item.winning_team,
-    }));
+    await this.loadData();
+    const profile = await this.contextService.currentProfile();
+    this.isAdmin = profile && profile.isAdmin;
+  }
+  
+
+  async loadData() : Promise<void> {
+    this.data = await this.dataService.getSessionList(1, 100);
   }
 
-  getMemberTeam1(boardSession: BoardSession) {
-    return boardSession.team.filter((member) => +member.team === 1);
+  openEditDialog(session: GameSession): void {
+    const dialogRef = this.dialog.open(UpdateGameSessionDialogComponent, {
+      width: '600px',
+      data: session
+    });
+
+    dialogRef.afterClosed().subscribe(async result => {
+      if(!result) return;
+      await this.updateGameSession(result!);
+      await this.loadData();
+      alert('Đã cập nhật');
+    });
   }
 
-  getMemberTeam2(boardSession: BoardSession) {
-    return boardSession.team.filter((member) => +member.team === 2);
+  async updateGameSession(updatedSession: GameSession): Promise<void> {
+    await this.dataService.updateSession(updatedSession.id, updatedSession);
   }
 
-  getTeam1Score(boardSession: BoardSession) {
-    return round(
-      this.getMemberTeam1(boardSession).reduce(
-        (acc, member) => acc + member.score,
-        0
-      ),
-      1
-    );
-  }
-
-  getTeam2Score(boardSession: BoardSession) {
-    return round(
-      this.getMemberTeam2(boardSession).reduce(
-        (acc, member) => acc + member.score,
-        0
-      ),
-      1
-    );
-  }
-
-  getWinningTeam(boardSession: BoardSession) {
-    return boardSession.winningTeam;
+  getSummary(session: GameSession) {
+    if (!session.teamSummary) return '';
+    let html = '';
+    const template = '<span class="{textClass}">{player}' +
+      '<span class="bg-sky-500 text-white text-sm font-semibold rounded ms-2 mx-2">{civilization}</span></span>';
+    const summaryObj = JSON.parse(session.teamSummary);
+    for (let team of summaryObj) {
+      let textClass = session.status == '0' ? 'text-white' : session.winningTeam == team.team ? 'text-green-500' : 'text-red-500';
+      let teamHtml = `<span class="${textClass}">Team ${team.team}: </span>`
+      for (let player of team.players) {
+        const playerHtml = template.replace('{player}', player.player).replace('{civilization}', player.civilization).replace('{textClass}', textClass);
+        teamHtml += playerHtml;
+      }
+      if (team.team == 1) teamHtml += '<br />';
+      html += teamHtml;
+    }
+    return html;
   }
 }

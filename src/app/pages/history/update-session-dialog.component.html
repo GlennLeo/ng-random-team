@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>Cập nhật kết quả</h2>
+
+<mat-dialog-content>
+  <form #form="ngForm">
+    <div class="mb-4">
+      <label>Winning Team</label>
+      <mat-radio-group [(ngModel)]="gameSession.winningTeam" name="winningTeam" required>
+        <mat-radio-button value="1">Team 1</mat-radio-button>
+        <mat-radio-button value="2">Team 2</mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <mat-form-field appearance="fill" style="margin-bottom: -1.25em; width: 100%">
+      <label>Note</label>
+      <textarea
+        matInput
+        [(ngModel)]="gameSession.note"
+        name="note"
+        class="w-full"
+      ></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button color="primary" (click)="onSave()">Save</button>
+</mat-dialog-actions>
