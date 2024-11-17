@@ -178,7 +178,7 @@ export class SupabaseService {
   }
 
   async getStatisticOfPlayer(playerId: number) {
-    const { data, error } = await this.supabase.rpc('player_statistics', {
+    const { data, error } = await this.supabase.rpc('player_statistic', {
       player_id_input: playerId,
     });
     if (error) {

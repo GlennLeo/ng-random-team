@@ -24,7 +24,6 @@ export class DashboardComponent implements OnInit {
   sessionStatus = '';
   winningTeam = 0;
   done = false;
-  secret = '';
 
   private readonly supabase = inject(SupabaseService);
   private readonly playerService = inject(PlayersService);
@@ -66,8 +65,7 @@ export class DashboardComponent implements OnInit {
   }
 
   isDisabled(attendee: Attendee): boolean {
-    const selectedCount = this.getAttendance().length;
-    return selectedCount >= this.teamSize && !attendee.checked;
+    return this.totalAttendees() >= this.teamSize && !attendee.checked;
   }
 
   totalAttendees(): number {
@@ -146,8 +144,7 @@ export class DashboardComponent implements OnInit {
   checkSessionLocked() {
     return (
       this.sessionStatus === 'confirmed' ||
-      (this.sessionStatus === 'finished' && !this.done) ||
-      this.secret !== 'dungcohoi'
+      (this.sessionStatus === 'finished' && !this.done)
     );
   }
 }

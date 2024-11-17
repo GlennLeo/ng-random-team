@@ -31,7 +31,7 @@
           buttonText="Finish"
           buttonType="button"
           (buttonClick)="onFinish()"
-          [disabled]="sessionStatus === 'finished' || secret !== 'dungcohoi'"
+          [disabled]="sessionStatus === 'finished'"
         ></app-ng-button>
       </div>
       } @if (sessionStatus === 'finished') {
@@ -121,20 +121,14 @@
         buttonText="Chia Team"
         buttonType="button"
         (buttonClick)="onGenTeam()"
-        [disabled]="checkSessionLocked()"
+        [disabled]="checkSessionLocked() || totalAttendees() < teamSize"
       ></app-ng-button>
       <app-ng-button
         buttonText="Chia Quân"
         buttonType="button"
         (buttonClick)="onGenHero()"
-        [disabled]="checkSessionLocked()"
+        [disabled]="checkSessionLocked() || totalAttendees() < teamSize"
       ></app-ng-button>
-      <input
-        [(ngModel)]="secret"
-        name="secret"
-        type="password"
-        class="bg-gray-400 shadow appearance-none rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-      />
     </div>
   </div>
 </form>

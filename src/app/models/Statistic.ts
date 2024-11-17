@@ -12,4 +12,12 @@ export interface PlayerStatistics {
   win_rate: string;
   hero_statistics: HeroStatistic[];
   most_hero: HeroStatistic;
+  most_lost_hero: {
+    hero: string;
+    losses: number;
+  };
+  most_won_hero: {
+    hero: string;
+    wins: number;
+  };
 }

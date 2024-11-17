@@ -3,6 +3,7 @@ import { SupabaseService } from '../../services/supabase.service';
 import { ActivatedRoute } from '@angular/router';
 import { HeroStatistic, PlayerStatistics } from '../../models/Statistic';
 import { CommonModule } from '@angular/common';
+import { round } from 'lodash';
 
 const quotes = [
   'Chưa tài đâu!!!',
@@ -33,6 +34,7 @@ export class StatisticsComponent implements OnInit {
     });
     if (this.id) {
       const data = await this.supabase.getStatisticOfPlayer(+this.id);
+      console.log({ data });
       if (data[0]) {
         // Map data into PlayerStatistics format
         this.statistic = {
@@ -41,13 +43,18 @@ export class StatisticsComponent implements OnInit {
           total_games: data[0].total_games,
           total_wins: data[0].total_wins,
           total_losts: data[0].total_games - data[0].total_wins,
-          win_rate: `${(data[0].total_wins / data[0].total_games) * 100}%`,
+          win_rate: `${round(
+            (data[0].total_wins / data[0].total_games) * 100,
+            1
+          )}%`,
           hero_statistics: data[0].hero_statistics as HeroStatistic[],
           most_hero: data[0].hero_statistics.reduce(
             (max: any, hero: any) =>
               hero.games_played > max.games_played ? hero : max,
             data[0].hero_statistics[0]
           ),
+          most_lost_hero: data[0].most_lost_hero,
+          most_won_hero: data[0].most_won_hero,
         };
       }
     }
