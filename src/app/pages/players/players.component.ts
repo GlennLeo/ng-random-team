@@ -1,36 +1,52 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { SupabaseService } from '../../services/supabase.service';
 import { Player } from '../../models/Player';
-import { mean } from 'lodash';
-import { RouterLink } from '@angular/router';
+import { mean, round } from 'lodash';
+import { TableModule } from 'primeng/table';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
+import { Router } from '@angular/router';
 
-interface PlayerWithScore extends Player {
+interface PlayerWithStats extends Player {
   score: number;
+  total_games: number;
+  total_wins: number;
+  total_losses: number;
 }
 
 @Component({
   selector: 'app-players',
   standalone: true,
-  imports: [RouterLink],
+  imports: [TableModule, InputIconModule, IconFieldModule, InputTextModule],
   templateUrl: './players.component.html',
   styleUrl: './players.component.css',
 })
 export class PlayersComponent implements OnInit {
-  players: PlayerWithScore[] = [];
+  players: PlayerWithStats[] = [];
   private readonly supabase = inject(SupabaseService);
+  private readonly router = inject(Router);
   constructor() {}
 
   async ngOnInit(): Promise<void> {
     try {
-      const { data } = await this.supabase.getPlayers();
+      const data = await this.supabase.getAllPlayersWithStatistic();
       if (data) {
         this.players = data
-          .filter((player) => player.name !== 'Phantom')
-          .map((player) => ({
+          .filter((player: any) => player.player_name !== 'Phantom')
+          .map((player: any) => ({
             ...player,
-            score: mean(player.scores),
+            score: round(mean(player.scores), 1),
+            win_rate:
+              !player.total_wins || !player.total_games
+                ? 0
+                : round((player.total_wins / player.total_games) * 100, 1),
           }));
       }
     } catch (error) {}
+  }
+  onRowSelect(event: any): void {
+    const playerId = event.data.player_id;
+    this.router.navigate(['/player', playerId]);
   }
 }

@@ -23,7 +23,7 @@ export const routes: Routes = [
         component: PlayersComponent,
       },
       {
-        path: 'statistics/:playerId',
+        path: 'player/:playerId',
         component: StatisticsComponent,
       },
     ],

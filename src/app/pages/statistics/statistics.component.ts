@@ -9,7 +9,7 @@ const quotes = [
   'Chưa tài đâu!!!',
   'Cũng ghê đấy!!!',
   'Tạm được!!!',
-  'CŨng thường thôi!!!',
+  'Cũng thường thôi!!!',
 ];
 
 @Component({

@@ -4,8 +4,7 @@ import {
   PostgrestSingleResponse,
   SupabaseClient,
 } from '@supabase/supabase-js';
-import { environment } from '../../environments/environment';
-import { Player, PlayerSession, TeamMember } from '../models/Player';
+import { Player, TeamMember } from '../models/Player';
 
 @Injectable({
   providedIn: 'root',
@@ -181,6 +180,15 @@ export class SupabaseService {
     const { data, error } = await this.supabase.rpc('player_statistic', {
       player_id_input: playerId,
     });
+    if (error) {
+      console.error('Error fetching grouped sessions:', error);
+      return [];
+    }
+    return data;
+  }
+
+  async getAllPlayersWithStatistic() {
+    const { data, error } = await this.supabase.rpc('all_player_statistics');
     if (error) {
       console.error('Error fetching grouped sessions:', error);
       return [];

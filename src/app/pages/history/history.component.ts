@@ -3,6 +3,7 @@ import { BoardSession } from '../../models/Board';
 import { BoardColumnComponent } from '../../shared/board-column/board-column.component';
 import { SupabaseService } from '../../services/supabase.service';
 import { mean, round } from 'lodash';
+import { formatDate } from '../../lib/utils';
 
 @Component({
   selector: 'app-history',
@@ -19,7 +20,7 @@ export class HistoryComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     const data = await this.supabase.getBoardList();
     this.boardSessions = data.map((item: any) => ({
-      id: item.id,
+      id: item.session_id,
       team: item.players.map((player: any) => ({
         id: player.player_id,
         name: player.name,
@@ -28,6 +29,7 @@ export class HistoryComponent implements OnInit {
         team: +player.team,
       })),
       winningTeam: item.winning_team,
+      created_at: formatDate(item.created_at),
     }));
   }
 

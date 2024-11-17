@@ -6,7 +6,7 @@
       Thông số người chơi
     </span>
   </h2>
-  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+  <div *ngIf="statistic" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <div
       class="rounded-2xl py-10 px-10 xl:py-16 xl:px-20 bg-gray-800 flex items-center justify-between flex-col gap-16 lg:flex-row"
     >
@@ -14,7 +14,7 @@
         <h2
           class="font-manrope text-4xl font-bold text-white mb-4 text-center lg:text-left"
         >
-          {{ statistic?.player_name }}
+          {{ statistic.player_name }}
         </h2>
         <p class="text-sm text-white leading-6 text-center lg:text-left">
           {{ quote }}
@@ -28,7 +28,7 @@
             <div
               class="font-manrope font-bold text-4xl text-indigo-600 mb-3 text-center lg:text-left"
             >
-              {{ statistic?.total_games }}
+              {{ statistic.total_games }}
             </div>
             <span class="text-white text-center block lg:text-left"
               >Tổng số trận đấu
@@ -38,7 +38,7 @@
             <div
               class="font-manrope font-bold text-4xl text-indigo-600 mb-3 text-center lg:text-left"
             >
-              {{ statistic?.total_wins }}
+              {{ statistic.total_wins }}
             </div>
             <span class="text-white text-center block lg:text-left"
               >Số trận thắng
@@ -48,7 +48,7 @@
             <div
               class="font-manrope font-bold text-4xl text-indigo-600 mb-3 text-center lg:text-left"
             >
-              {{ statistic?.total_losts }}
+              {{ statistic.total_losts }}
             </div>
             <span class="text-white text-center block lg:text-left"
               >Số trận thua</span
@@ -58,7 +58,7 @@
             <div
               class="font-manrope font-bold text-4xl text-indigo-600 mb-3 text-center lg:text-left"
             >
-              {{ statistic?.win_rate }}
+              {{ statistic.win_rate }}
             </div>
             <span class="text-white text-center block lg:text-left"
               >Tỷ lệ thắng</span
@@ -68,7 +68,7 @@
       </div>
     </div>
   </div>
-  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+  <div *ngIf="statistic" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <div
       class="rounded-2xl py-10 px-10 xl:py-16 xl:px-20 bg-gray-800 flex items-center justify-between flex-col gap-16 lg:flex-row"
     >
@@ -76,7 +76,7 @@
         <h2
           class="font-manrope text-4xl font-bold text-white mb-4 text-center lg:text-left"
         >
-          {{ statistic?.most_hero?.hero }}
+          {{ statistic.most_hero.hero }}
         </h2>
         <p class="text-sm text-white leading-6 text-center lg:text-left">
           Quân được cầm nhiều nhất
@@ -86,7 +86,7 @@
         <div
           class="flex flex-col flex-1 gap-10 lg:gap-0 lg:flex-row lg:justify-between"
         >
-          @for (heroStat of statistic?.hero_statistics; track heroStat.hero) {
+          @for (heroStat of statistic.hero_statistics; track heroStat.hero) {
           <div class="block">
             <div
               class="font-manrope font-bold text-4xl text-indigo-600 mb-3 text-center lg:text-left"
@@ -102,19 +102,19 @@
       </div>
     </div>
   </div>
-  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+  <div *ngIf="statistic" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <div
       class="rounded-2xl py-10 px-10 xl:py-16 xl:px-20 bg-gray-800 flex items-center flex-col gap-16 lg:flex-row"
     >
-      @if (statistic?.most_won_hero?.hero) {
+      @if (statistic.most_won_hero.hero) {
       <div class="w-full lg:w-60">
         <h2
           class="font-manrope text-4xl font-bold text-white mb-4 text-center lg:text-left"
         >
-          {{ statistic?.most_won_hero?.hero }}
+          {{ statistic.most_won_hero.hero }}
         </h2>
         <p class="text-sm text-white leading-6 text-center lg:text-left">
-          Quân thắng nhiều nhất ({{ statistic?.most_won_hero?.wins }})
+          Quân thắng nhiều nhất ({{ statistic.most_won_hero.wins }})
         </p>
       </div>
       }
@@ -122,10 +122,10 @@
         <h2
           class="font-manrope text-4xl font-bold text-white mb-4 text-center lg:text-left"
         >
-          {{ statistic?.most_lost_hero?.hero }}
+          {{ statistic.most_lost_hero.hero }}
         </h2>
         <p class="text-sm text-white leading-6 text-center lg:text-left">
-          Quân thua nhiều nhất ({{ statistic?.most_lost_hero?.losses }})
+          Quân thua nhiều nhất ({{ statistic.most_lost_hero.losses }})
         </p>
       </div>
     </div>
