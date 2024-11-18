@@ -280,7 +280,6 @@ export class PlayersService {
 
     const isWithinAllowedTime =
       isWithinTimeRange(11, 30, 13, 30) || isWithinTimeRange(17, 0, 20, 0);
-    console.log({ isWithinAllowedTime });
     if (isWithinAllowedTime) {
       this.sendWebhookMessage(team1, team2);
     }
