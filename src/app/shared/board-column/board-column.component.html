@@ -1,8 +1,8 @@
 <div>
-  <div class="border-b-2 border-sky-400 relative">
+  <div class="border-b border-gray-400 relative">
     @if (win()) {
     <span
-      class="bg-green-500 text-xs text-white font-semibold p-1 rounded ms-2 absolute top-0 right-0"
+      class="bg-green-500 text-xs text-white font-semibold p-1 rounded ms-2 absolute top-0 right-1"
     >
       W
     </span>
@@ -13,7 +13,7 @@
     >
       {{ teamName() }}
       <span
-        class="bg-sky-500 text-white text-2xl font-semibold me-2 px-2.5 py-0.5 rounded ms-2"
+        class="bg-gray-500 text-white text-2xl font-semibold me-2 px-2.5 py-0.5 rounded ms-2"
         [ngClass]="{ 'text-sm': isSmall() }"
       >
         {{ score() }}
@@ -24,7 +24,7 @@
     @for (member of memberList(); track member.name) {
     <li
       key="{member.name}"
-      class="font-bold relative border-b border-sky-400 border-opacity-40 py-2"
+      class="font-bold relative border-b border-gray-400 border-opacity-40 py-2"
       [ngClass]="{ 'text-xs': isSmall() }"
     >
       <div
@@ -33,7 +33,7 @@
       >
         <p class="text-white">{{ member.name }}</p>
         <span
-          class="bg-sky-500 text-white text-sm font-semibold rounded ms-2 absolute right-0 mx-2"
+          class="bg-gray-700 text-yellow-300 text-sm font-semibold rounded ms-2 absolute right-0 mx-2 px-1"
           [ngClass]="{ 'text-xs': isSmall() }"
         >
           <p class="text-left" [ngClass]="{ 'text-xs': isSmall() }">

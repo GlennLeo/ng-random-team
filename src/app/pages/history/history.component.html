@@ -6,12 +6,12 @@
       Lịch sử
     </span>
   </h2>
-  <div class="grid grid-cols-4 gap-4">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
     @for (boardSession of boardSessions; track boardSession.id) {
     <article>
       <div class="text-white">{{ boardSession.created_at }}</div>
       <div
-        class="grid grid-cols-2 justify-center mx-auto border-2 border-sky-400 p-2 divide-x divide-sky-400 rounded w-auto"
+        class="grid grid-cols-2 bg-gray-800 justify-center mx-auto p-2 divide-x divide-gray-400 rounded w-auto"
       >
         <app-board-column
           [teamName]="'Team 1'"
