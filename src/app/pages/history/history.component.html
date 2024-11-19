@@ -6,12 +6,17 @@
       Lịch sử
     </span>
   </h2>
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
     @for (boardSession of boardSessions; track boardSession.id) {
-    <article>
-      <div class="text-white">{{ boardSession.created_at }}</div>
+    <article class="bg-gray-700 p-1 rounded flex flex-col gap-2">
+      <div class="flex items-center justify-between">
+        <div class="text-white text-sm">{{ boardSession.created_at }}</div>
+        <div class="text-white text-sm">
+          {{ boardSession.duration }}
+        </div>
+      </div>
       <div
-        class="grid grid-cols-2 bg-gray-800 justify-center mx-auto p-2 divide-x divide-gray-400 rounded w-auto"
+        class="grid grid-cols-2 bg-gray-800 justify-center p-2 divide-x divide-gray-400 rounded w-auto flex-1 divide-opacity-40"
       >
         <app-board-column
           [teamName]="'Team 1'"

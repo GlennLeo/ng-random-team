@@ -3,12 +3,13 @@ import { BoardSession } from '../../models/Board';
 import { BoardColumnComponent } from '../../shared/board-column/board-column.component';
 import { SupabaseService } from '../../services/supabase.service';
 import { mean, round } from 'lodash';
-import { formatDate } from '../../lib/utils';
+import { formatDate, getDuration } from '../../lib/utils';
+import { ChipModule } from 'primeng/chip';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [BoardColumnComponent],
+  imports: [BoardColumnComponent, ChipModule],
   templateUrl: './history.component.html',
   styleUrl: './history.component.css',
 })
@@ -30,6 +31,7 @@ export class HistoryComponent implements OnInit {
       })),
       winningTeam: item.winning_team,
       created_at: formatDate(item.created_at),
+      duration: getDuration(item.created_at, item.updated_at),
     }));
   }
 

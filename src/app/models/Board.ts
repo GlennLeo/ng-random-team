@@ -5,4 +5,5 @@ export class BoardSession {
   team: TeamMember[] = [];
   winningTeam: number = 0;
   created_at?: string;
+  duration?: string;
 }
