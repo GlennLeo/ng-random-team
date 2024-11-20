@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { SupabaseService } from '../../services/supabase.service';
 import { Player } from '../../models/Player';
 import { mean, round } from 'lodash';
@@ -21,6 +21,7 @@ interface PlayerWithStats extends Player {
   imports: [TableModule, InputIconModule, IconFieldModule, InputTextModule],
   templateUrl: './players.component.html',
   styleUrl: './players.component.css',
+  encapsulation: ViewEncapsulation.None,
 })
 export class PlayersComponent implements OnInit {
   players: PlayerWithStats[] = [];
