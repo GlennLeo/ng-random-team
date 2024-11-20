@@ -9,7 +9,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Router } from '@angular/router';
 
 interface PlayerWithStats extends Player {
-  score: number;
   total_games: number;
   total_wins: number;
   total_losses: number;
@@ -37,7 +36,6 @@ export class PlayersComponent implements OnInit {
           .filter((player: any) => player.player_name !== 'Phantom')
           .map((player: any) => ({
             ...player,
-            score: round(mean(player.scores), 1),
             win_rate:
               !player.total_wins || !player.total_games
                 ? 0

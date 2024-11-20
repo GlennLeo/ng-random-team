@@ -20,14 +20,12 @@
       >
         <app-board-column
           [teamName]="'Team 1'"
-          [score]="getTeam1Score(boardSession)"
           [memberList]="getMemberTeam1(boardSession)"
           [win]="getWinningTeam(boardSession) === 1"
           [isSmall]="true"
         ></app-board-column>
         <app-board-column
           [teamName]="'Team 2'"
-          [score]="getTeam2Score(boardSession)"
           [memberList]="getMemberTeam2(boardSession)"
           [win]="getWinningTeam(boardSession) === 2"
           [isSmall]="true"

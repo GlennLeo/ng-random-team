@@ -9,10 +9,11 @@
     >
       {{ teamName() }}
       <span
+        *ngIf="elo()"
         class="bg-gray-500 text-white text-2xl font-semibold me-2 px-2.5 py-0.5 rounded ms-2"
         [ngClass]="{ 'text-sm': isSmall() }"
       >
-        {{ score() }}
+        {{ elo() }}
       </span>
     </h1>
   </div>

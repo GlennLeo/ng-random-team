@@ -26,7 +26,7 @@ export class HistoryComponent implements OnInit {
         id: player.player_id,
         name: player.name,
         hero: player.hero,
-        score: mean(player.scores),
+        elo: player.elo,
         team: +player.team,
       })),
       winningTeam: item.winning_team,
@@ -43,20 +43,20 @@ export class HistoryComponent implements OnInit {
     return boardSession.team.filter((member) => +member.team === 2);
   }
 
-  getTeam1Score(boardSession: BoardSession) {
+  getTeam1Elo(boardSession: BoardSession) {
     return round(
       this.getMemberTeam1(boardSession).reduce(
-        (acc, member) => acc + member.score,
+        (acc, member) => acc + member.elo,
         0
       ),
       1
     );
   }
 
-  getTeam2Score(boardSession: BoardSession) {
+  getTeam2Elo(boardSession: BoardSession) {
     return round(
       this.getMemberTeam2(boardSession).reduce(
-        (acc, member) => acc + member.score,
+        (acc, member) => acc + member.elo,
         0
       ),
       1

@@ -1,3 +1,4 @@
+import { round } from 'lodash';
 import { Attendee, TeamMember } from '../models/Player';
 
 export function updateAttendance(
@@ -51,8 +52,43 @@ export function getDuration(
   return formattedDuration;
 }
 
-// Example Usage
-const createdAt = '2024-11-19T08:00:00Z';
-const updatedAt = '2024-11-19T10:15:00Z';
+export function calculatePlayerPoints(
+  players: TeamMember[],
+  winningTeam: number,
+  basePoint: number = 20
+): TeamMember[] {
+  const averagePoint = players.reduce((sum, player) => sum + player.elo, 0) / 8;
 
-console.log(getDuration(createdAt, updatedAt)); // Output: "02:15"
+  const updatedPlayers = players.map((player) => {
+    let winPoint: number;
+    let losePoint: number;
+
+    if (player.elo > averagePoint) {
+      winPoint = round(
+        (1 - (player.elo - averagePoint) / averagePoint) * basePoint
+      );
+      losePoint = round(
+        (1 + (player.elo - averagePoint) / averagePoint) * basePoint
+      );
+    } else {
+      winPoint = round(
+        (1 - (player.elo - averagePoint) / averagePoint) * basePoint
+      );
+      losePoint = round(
+        (1 + (player.elo - averagePoint) / averagePoint) * basePoint
+      );
+    }
+    if (+player.team === +winningTeam) {
+      return {
+        ...player,
+        elo: player.elo + winPoint,
+      };
+    } else {
+      return {
+        ...player,
+        elo: player.elo - losePoint,
+      };
+    }
+  });
+  return updatedPlayers;
+}

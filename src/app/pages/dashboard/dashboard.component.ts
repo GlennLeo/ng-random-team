@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 import { mean, round } from 'lodash';
 import { PlayersService } from '../../services/players.service';
 import { NgButtonComponent } from '../../shared/button/ng-button/ng-button.component';
-import { updateAttendance } from '../../lib/utils';
+import { calculatePlayerPoints, updateAttendance } from '../../lib/utils';
 
 @Component({
   selector: 'app-dashboard',
@@ -38,7 +38,7 @@ export class DashboardComponent implements OnInit {
         id: item.player_id.id,
         name: item.player_id.name,
         hero: item.hero,
-        score: mean(item.player_id.scores),
+        elo: item.player_id.elo,
         team: +item.team,
       }));
       this.attendance = updateAttendance(this.attendance, this.memberList);
@@ -58,7 +58,7 @@ export class DashboardComponent implements OnInit {
         this.attendance = data.map((item) => ({
           ...item,
           checked: false,
-          score: mean(item.scores),
+          elo: item.elo,
         }));
       }
     } catch (error) {}
@@ -82,15 +82,15 @@ export class DashboardComponent implements OnInit {
   getMemberTeam2() {
     return this.memberList.filter((mem) => mem.team === 2);
   }
-  getTeam1Score() {
+  getTeam1Elo() {
     return round(
-      this.getMemberTeam1().reduce((acc, member) => acc + member.score, 0),
+      this.getMemberTeam1().reduce((acc, member) => acc + member.elo, 0),
       1
     );
   }
-  getTeam2Score() {
+  getTeam2Elo() {
     return round(
-      this.getMemberTeam2().reduce((acc, member) => acc + member.score, 0),
+      this.getMemberTeam2().reduce((acc, member) => acc + member.elo, 0),
       1
     );
   }
@@ -99,10 +99,7 @@ export class DashboardComponent implements OnInit {
     this.done = false;
     const data = await this.playerService.generateTeams(
       this.teamSize,
-      this.getAttendance().map((a) => ({
-        ...a,
-        score: mean(a.scores),
-      }))
+      this.getAttendance()
     );
     this.memberList = data.team;
     const session = await this.supabase.createSession();
@@ -133,10 +130,18 @@ export class DashboardComponent implements OnInit {
     this.sessionStatus = 'finished';
   }
   async updateWinningTeam() {
+    // Update winning team
     await this.supabase.updateSessionWinningTeam(
       this.sessionId,
       this.winningTeam
     );
+    // Update elo
+    const newPlayerList = calculatePlayerPoints(
+      this.memberList.filter((player) => player.name !== 'Phantom'),
+      this.winningTeam
+    );
+    await this.supabase.batchUpdatePlayers(newPlayerList);
+    this.memberList = newPlayerList;
     this.sessionStatus = '';
     this.done = true;
   }

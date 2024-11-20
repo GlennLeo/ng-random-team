@@ -12,7 +12,7 @@ import { BadgeModule } from 'primeng/badge';
 })
 export class BoardColumnComponent {
   teamName = input.required<string>();
-  score = input.required<number>();
+  elo = input<number>();
   memberList = input.required<TeamMember[]>();
   win = input(false);
   isSmall = input(false);

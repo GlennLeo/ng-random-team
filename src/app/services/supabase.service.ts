@@ -27,7 +27,7 @@ export class SupabaseService {
   }
 
   async getBoardList() {
-    const { data, error } = await this.supabase.rpc('grouped_session');
+    const { data, error } = await this.supabase.rpc('grouped_sessions');
     if (error) {
       console.error('Error fetching grouped sessions:', error);
       return [];
@@ -135,22 +135,27 @@ export class SupabaseService {
 
   async createPlayerSession(id: string | number | null, players: TeamMember[]) {
     try {
+      // Update the session status
       await this.supabase
         .from('session')
         .update({ status: 'confirmed' })
         .eq('id', id);
-      for (const player of players) {
-        await this.supabase.from('player_session').insert({
-          session_id: id,
-          player_id: player.id,
-          team: player.team,
-          hero: player.hero,
-        });
-      }
+
+      // Prepare data for batch insertion
+      const playerSessions = players.map((player) => ({
+        session_id: id,
+        player_id: player.id,
+        team: player.team,
+        hero: player.hero,
+      }));
+
+      // Batch insert into player_session
+      await this.supabase.from('player_session').insert(playerSessions);
     } catch (error) {
       console.log({ error });
     }
   }
+
   async updateSessionStatus(id: number, status: string) {
     const { data, error } = await this.supabase
       .from('session')
@@ -188,11 +193,34 @@ export class SupabaseService {
   }
 
   async getAllPlayersWithStatistic() {
-    const { data, error } = await this.supabase.rpc('all_player_statistics');
+    const { data, error } = await this.supabase.rpc('all_player_statistic');
     if (error) {
       console.error('Error fetching grouped sessions:', error);
       return [];
     }
     return data;
+  }
+
+  async batchUpdatePlayers(players: TeamMember[]): Promise<any> {
+    try {
+      const updates = players.map((player) => ({
+        id: player.id,
+        name: player.name,
+        elo: player.elo,
+      }));
+
+      const { data, error } = await this.supabase
+        .from('player')
+        .upsert(updates, { onConflict: 'id' }); // Use `update` if you want to strictly update existing records.
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error updating players:', error);
+      throw error;
+    }
   }
 }

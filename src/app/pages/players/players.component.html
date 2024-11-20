@@ -24,8 +24,8 @@
           <th pSortableColumn="player_name" style="width: 15%">
             Tên <p-sortIcon field="player_name" />
           </th>
-          <th pSortableColumn="score" style="width: 15%">
-            Điểm <p-sortIcon field="score" />
+          <th pSortableColumn="elo" style="width: 15%">
+            Elo <p-sortIcon field="elo" />
           </th>
           <th pSortableColumn="win_rate" style="width: 15%">
             Tỷ lệ thắng <p-sortIcon field="win_rate" />
@@ -45,7 +45,7 @@
         <tr [pSelectableRow]="player">
           <td>{{ player.player_id }}</td>
           <td>{{ player.player_name }}</td>
-          <td>{{ player.score }}</td>
+          <td>{{ player.elo }}</td>
           <td>{{ player.win_rate }}%</td>
           <td>{{ player.total_wins }}</td>
           <td>{{ player.total_losses }}</td>

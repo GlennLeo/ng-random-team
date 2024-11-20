@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Attendee, TeamMember } from '../models/Player';
 import { shuffle } from 'lodash';
-import { environment } from '../../environments/environment';
 import { heroes } from '../lib/constant';
 
 @Injectable({
@@ -27,9 +26,9 @@ export class PlayersService {
         teamSize === 8
           ? this.generateTeams44(attendance)
           : this.generateTeams33(attendance);
-      const team1Score = team1.reduce((acc, person) => acc + person.score, 0);
-      const team2Score = team2.reduce((acc, person) => acc + person.score, 0);
-      const difference = Math.abs(team1Score - team2Score);
+      const team1Elo = team1.reduce((acc, person) => acc + person.elo, 0);
+      const team2Elo = team2.reduce((acc, person) => acc + person.elo, 0);
+      const difference = Math.abs(team1Elo - team2Elo);
 
       if (difference < lowestDifference) {
         lowestDifference = difference;
@@ -94,29 +93,29 @@ export class PlayersService {
       };
     }
 
-    // Sort people by score in descending order
+    // Sort people by elo in descending order
     const sortedPeople = people
-      .sort((a, b) => b.score - a.score)
+      .sort((a, b) => b.elo - a.elo)
       .map((p) => ({ ...p, hero: '', team: 0 })) as TeamMember[];
 
     const team1: TeamMember[] = [];
     const team2: TeamMember[] = [];
-    // Shuffle the top 4 highest score members
+    // Shuffle the top 4 highest elo members
     const top4Highest = sortedPeople.slice(0, 4);
-    // Shuffle the top 4 lowest score members
+    // Shuffle the top 4 lowest elo members
     const top4Lowest = shuffle(sortedPeople.slice(4));
 
-    // Distribute the top 4 highest score members into 2 teams
+    // Distribute the top 4 highest elo members into 2 teams
     team1.push(top4Highest[0], top4Highest[3]);
     team2.push(top4Highest[1], top4Highest[2]);
 
-    // Distribute the top 4 lowest score members into 2 teams
+    // Distribute the top 4 lowest elo members into 2 teams
     team1.push(top4Lowest[0], top4Lowest[3]);
     team2.push(top4Lowest[1], top4Lowest[2]);
-    let team1Score = team1.reduce((acc, person) => acc + person.score, 0);
-    let team2Score = team2.reduce((acc, person) => acc + person.score, 0);
+    let team1Elo = team1.reduce((acc, person) => acc + person.elo, 0);
+    let team2Elo = team2.reduce((acc, person) => acc + person.elo, 0);
     let retry = 0;
-    while (Math.abs(team1Score - team2Score) > 1 && retry < 20) {
+    while (Math.abs(team1Elo - team2Elo) > 100 && retry < 20) {
       // Shuffle the teams again
       const shuffledPeople = sortedPeople;
       const top4Highest = shuffledPeople.slice(0, 4);
@@ -131,12 +130,12 @@ export class PlayersService {
       team1.push(top4Lowest[0], top4Lowest[3]);
       team2.push(top4Lowest[1], top4Lowest[2]);
 
-      team1Score = team1.reduce((acc, person) => acc + person.score, 0);
-      team2Score = team2.reduce((acc, person) => acc + person.score, 0);
+      team1Elo = team1.reduce((acc, person) => acc + person.elo, 0);
+      team2Elo = team2.reduce((acc, person) => acc + person.elo, 0);
       retry++;
     }
     retry = 0;
-    while (Math.abs(team1Score - team2Score) > 1.5 && retry < 20) {
+    while (Math.abs(team1Elo - team2Elo) > 150 && retry < 20) {
       // Shuffle the teams again
       const shuffledPeople = sortedPeople;
       const top4Highest = shuffledPeople.slice(0, 4);
@@ -151,12 +150,12 @@ export class PlayersService {
       team1.push(top4Lowest[0], top4Lowest[3]);
       team2.push(top4Lowest[1], top4Lowest[2]);
 
-      team1Score = team1.reduce((acc, person) => acc + person.score, 0);
-      team2Score = team2.reduce((acc, person) => acc + person.score, 0);
+      team1Elo = team1.reduce((acc, person) => acc + person.elo, 0);
+      team2Elo = team2.reduce((acc, person) => acc + person.elo, 0);
       retry++;
     }
     retry = 0;
-    while (Math.abs(team1Score - team2Score) > 2 && retry < 50) {
+    while (Math.abs(team1Elo - team2Elo) > 200 && retry < 50) {
       // Shuffle the teams again
       const shuffledPeople = shuffle(sortedPeople);
       const top4Highest = shuffledPeople.slice(0, 4);
@@ -171,8 +170,8 @@ export class PlayersService {
       team1.push(top4Lowest[0], top4Lowest[3]);
       team2.push(top4Lowest[1], top4Lowest[2]);
 
-      team1Score = team1.reduce((acc, person) => acc + person.score, 0);
-      team2Score = team2.reduce((acc, person) => acc + person.score, 0);
+      team1Elo = team1.reduce((acc, person) => acc + person.elo, 0);
+      team2Elo = team2.reduce((acc, person) => acc + person.elo, 0);
       retry++;
     }
     return { team1, team2 };
@@ -188,19 +187,19 @@ export class PlayersService {
       };
     }
 
-    // Sort people by score in descending order
+    // Sort people by elo in descending order
     const sortedPeople = people
-      .sort((a, b) => b.score - a.score)
+      .sort((a, b) => b.elo - a.elo)
       .map((p) => ({ ...p, hero: '', team: 0 })) as TeamMember[];
 
     const team1: TeamMember[] = [];
     const team2: TeamMember[] = [];
-    // Shuffle the top 2 highest score members
+    // Shuffle the top 2 highest elo members
     const top2Highest = sortedPeople.slice(0, 2);
     // Shuffle remaining members
     const remaining = sortedPeople.slice(2);
 
-    // Distribute the top 2 highest score members into 2 teams
+    // Distribute the top 2 highest elo members into 2 teams
     team1.push(top2Highest[0]);
     team2.push(top2Highest[1]);
 
@@ -220,10 +219,10 @@ export class PlayersService {
       team1.push(team2.pop()!);
     }
 
-    let team1Score = team1.reduce((acc, person) => acc + person.score, 0);
-    let team2Score = team2.reduce((acc, person) => acc + person.score, 0);
+    let team1Elo = team1.reduce((acc, person) => acc + person.elo, 0);
+    let team2Elo = team2.reduce((acc, person) => acc + person.elo, 0);
     let retry = 0;
-    while (Math.abs(team1Score - team2Score) > 1.5 && retry < 20) {
+    while (Math.abs(team1Elo - team2Elo) > 150 && retry < 20) {
       // Shuffle the teams again
       const shuffledPeople = sortedPeople.sort(() => Math.random() - 0.5);
       const top2Highest = shuffledPeople.slice(0, 2);
@@ -250,8 +249,8 @@ export class PlayersService {
         team1.push(team2.pop()!);
       }
 
-      team1Score = team1.reduce((acc, person) => acc + person.score, 0);
-      team2Score = team2.reduce((acc, person) => acc + person.score, 0);
+      team1Elo = team1.reduce((acc, person) => acc + person.elo, 0);
+      team2Elo = team2.reduce((acc, person) => acc + person.elo, 0);
       retry++;
     }
     return { team1, team2 };
