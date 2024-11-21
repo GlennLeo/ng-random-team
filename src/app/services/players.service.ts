@@ -22,10 +22,7 @@ export class PlayersService {
     let lowestDifference = Infinity;
 
     for (let i = 0; i < 5; i++) {
-      const { team1, team2 } =
-        teamSize === 8
-          ? this.generateTeams44(attendance)
-          : this.generateTeams33(attendance);
+      const { team1, team2 } = this.generateTeamsWithMinScore(attendance);
       const team1Elo = team1.reduce((acc, person) => acc + person.elo, 0);
       const team2Elo = team2.reduce((acc, person) => acc + person.elo, 0);
       const difference = Math.abs(team1Elo - team2Elo);
@@ -82,7 +79,7 @@ export class PlayersService {
     };
   };
 
-  private generateTeams44(people: Attendee[]): {
+  private generateTeamsWithMinScore(people: Attendee[]): {
     team1: TeamMember[];
     team2: TeamMember[];
   } {
@@ -93,168 +90,72 @@ export class PlayersService {
       };
     }
 
-    // Sort people by elo in descending order
-    const sortedPeople = people
-      .sort((a, b) => b.elo - a.elo)
-      .map((p) => ({ ...p, hero: '', team: 0 })) as TeamMember[];
-
-    const team1: TeamMember[] = [];
-    const team2: TeamMember[] = [];
-    // Shuffle the top 4 highest elo members
-    const top4Highest = sortedPeople.slice(0, 4);
-    // Shuffle the top 4 lowest elo members
-    const top4Lowest = shuffle(sortedPeople.slice(4));
-
-    // Distribute the top 4 highest elo members into 2 teams
-    team1.push(top4Highest[0], top4Highest[3]);
-    team2.push(top4Highest[1], top4Highest[2]);
-
-    // Distribute the top 4 lowest elo members into 2 teams
-    team1.push(top4Lowest[0], top4Lowest[3]);
-    team2.push(top4Lowest[1], top4Lowest[2]);
-    let team1Elo = team1.reduce((acc, person) => acc + person.elo, 0);
-    let team2Elo = team2.reduce((acc, person) => acc + person.elo, 0);
-    let retry = 0;
-    while (Math.abs(team1Elo - team2Elo) > 100 && retry < 20) {
-      // Shuffle the teams again
-      const shuffledPeople = sortedPeople;
-      const top4Highest = shuffledPeople.slice(0, 4);
-      const top4Lowest = shuffle(shuffledPeople.slice(4));
-
-      team1.length = 0;
-      team2.length = 0;
-
-      team1.push(top4Highest[0], top4Highest[3]);
-      team2.push(top4Highest[1], top4Highest[2]);
-
-      team1.push(top4Lowest[0], top4Lowest[3]);
-      team2.push(top4Lowest[1], top4Lowest[2]);
-
-      team1Elo = team1.reduce((acc, person) => acc + person.elo, 0);
-      team2Elo = team2.reduce((acc, person) => acc + person.elo, 0);
-      retry++;
-    }
-    retry = 0;
-    while (Math.abs(team1Elo - team2Elo) > 150 && retry < 20) {
-      // Shuffle the teams again
-      const shuffledPeople = sortedPeople;
-      const top4Highest = shuffledPeople.slice(0, 4);
-      const top4Lowest = shuffle(shuffledPeople.slice(4));
-
-      team1.length = 0;
-      team2.length = 0;
-
-      team1.push(top4Highest[0], top4Highest[3]);
-      team2.push(top4Highest[1], top4Highest[2]);
-
-      team1.push(top4Lowest[0], top4Lowest[3]);
-      team2.push(top4Lowest[1], top4Lowest[2]);
-
-      team1Elo = team1.reduce((acc, person) => acc + person.elo, 0);
-      team2Elo = team2.reduce((acc, person) => acc + person.elo, 0);
-      retry++;
-    }
-    retry = 0;
-    while (Math.abs(team1Elo - team2Elo) > 200 && retry < 50) {
-      // Shuffle the teams again
-      const shuffledPeople = shuffle(sortedPeople);
-      const top4Highest = shuffledPeople.slice(0, 4);
-      const top4Lowest = shuffle(shuffledPeople.slice(4));
-
-      team1.length = 0;
-      team2.length = 0;
-
-      team1.push(top4Highest[0], top4Highest[3]);
-      team2.push(top4Highest[1], top4Highest[2]);
-
-      team1.push(top4Lowest[0], top4Lowest[3]);
-      team2.push(top4Lowest[1], top4Lowest[2]);
-
-      team1Elo = team1.reduce((acc, person) => acc + person.elo, 0);
-      team2Elo = team2.reduce((acc, person) => acc + person.elo, 0);
-      retry++;
-    }
-    return { team1, team2 };
+    return this.genTeamRandomly(people);
   }
-  generateTeams33(people: Attendee[]): {
-    team1: TeamMember[];
-    team2: TeamMember[];
-  } {
-    if (people.length !== 6) {
+
+  private genTeamRandomly = (people: Attendee[]) => {
+    if (people.length !== people.length) {
       return {
         team1: [],
         team2: [],
       };
     }
+    const eachTeamCount = people.length / 2;
+    let attempts = 0; // Track attempts to avoid infinite loops
+    const maxAttempts = 1000; // Safety limit for retries
 
-    // Sort people by elo in descending order
-    const sortedPeople = people
-      .sort((a, b) => b.elo - a.elo)
+    while (attempts < maxAttempts) {
+      // Shuffle players randomly
+      const shuffledPlayers = [...people]
+        .sort(() => Math.random() - 0.5)
+        .map((p) => ({ ...p, hero: '', team: 0 })) as TeamMember[];
+
+      // Divide into two teams
+      const team1 = shuffledPlayers.slice(0, eachTeamCount);
+      const team2 = shuffledPlayers.slice(eachTeamCount);
+
+      // Calculate the scores of each team
+      const team1Score = team1.reduce((sum, player) => sum + player.elo, 0);
+      const team2Score = team2.reduce((sum, player) => sum + player.elo, 0);
+
+      // Check if the score difference condition is met
+      if (Math.abs(team1Score - team2Score) <= 150) {
+        return { team1, team2 };
+      }
+      attempts++;
+    }
+    attempts = 0; // Track attempts to avoid infinite loops
+    while (attempts < maxAttempts) {
+      // Shuffle players randomly
+      const shuffledPlayers = [...people]
+        .sort(() => Math.random() - 0.5)
+        .map((p) => ({ ...p, hero: '', team: 0 })) as TeamMember[];
+
+      // Divide into two teams
+      const team1 = shuffledPlayers.slice(0, eachTeamCount);
+      const team2 = shuffledPlayers.slice(eachTeamCount);
+
+      // Calculate the scores of each team
+      const team1Score = team1.reduce((sum, player) => sum + player.elo, 0);
+      const team2Score = team2.reduce((sum, player) => sum + player.elo, 0);
+
+      // Check if the score difference condition is met
+      if (Math.abs(team1Score - team2Score) <= 200) {
+        return { team1, team2 };
+      }
+      attempts++;
+    }
+    const shuffledPlayers = [...people]
+      .sort(() => Math.random() - 0.5)
       .map((p) => ({ ...p, hero: '', team: 0 })) as TeamMember[];
 
-    const team1: TeamMember[] = [];
-    const team2: TeamMember[] = [];
-    // Shuffle the top 2 highest elo members
-    const top2Highest = sortedPeople.slice(0, 2);
-    // Shuffle remaining members
-    const remaining = sortedPeople.slice(2);
+    // Divide into two teams
+    const team1 = shuffledPlayers.slice(0, eachTeamCount);
+    const team2 = shuffledPlayers.slice(eachTeamCount);
 
-    // Distribute the top 2 highest elo members into 2 teams
-    team1.push(top2Highest[0]);
-    team2.push(top2Highest[1]);
-
-    // Distribute the remaining members into 2 teams
-    remaining.forEach((person, index) => {
-      if (index % 2 === 0) {
-        team1.push(person);
-      } else {
-        team2.push(person);
-      }
-    });
-
-    // Ensure each team has exactly 3 members
-    if (team1.length > 3) {
-      team2.push(team1.pop()!);
-    } else if (team2.length > 3) {
-      team1.push(team2.pop()!);
-    }
-
-    let team1Elo = team1.reduce((acc, person) => acc + person.elo, 0);
-    let team2Elo = team2.reduce((acc, person) => acc + person.elo, 0);
-    let retry = 0;
-    while (Math.abs(team1Elo - team2Elo) > 150 && retry < 20) {
-      // Shuffle the teams again
-      const shuffledPeople = sortedPeople.sort(() => Math.random() - 0.5);
-      const top2Highest = shuffledPeople.slice(0, 2);
-      const remaining = shuffledPeople.slice(2);
-
-      team1.length = 0;
-      team2.length = 0;
-
-      team1.push(top2Highest[0]);
-      team2.push(top2Highest[1]);
-
-      remaining.forEach((person, index) => {
-        if (index % 2 === 0) {
-          team1.push(person);
-        } else {
-          team2.push(person);
-        }
-      });
-
-      // Ensure each team has exactly 3 members
-      if (team1.length > 3) {
-        team2.push(team1.pop()!);
-      } else if (team2.length > 3) {
-        team1.push(team2.pop()!);
-      }
-
-      team1Elo = team1.reduce((acc, person) => acc + person.elo, 0);
-      team2Elo = team2.reduce((acc, person) => acc + person.elo, 0);
-      retry++;
-    }
     return { team1, team2 };
-  }
+  };
+
   private handleSendWebhookMessage = (
     team1: TeamMember[],
     team2: TeamMember[]
