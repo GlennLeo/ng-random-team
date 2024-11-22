@@ -97,10 +97,7 @@ export class DashboardComponent implements OnInit {
 
   async onGenTeam() {
     this.done = false;
-    const data = await this.playerService.generateTeams(
-      this.teamSize,
-      this.getAttendance()
-    );
+    const data = await this.playerService.generateTeams(this.getAttendance());
     this.memberList = data.team;
     const session = await this.supabase.createSession();
     this.sessionId = session.id;

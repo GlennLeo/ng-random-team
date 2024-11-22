@@ -11,7 +11,7 @@ export class PlayersService {
 
   constructor() {}
 
-  generateTeams = async (teamSize: number, attendance: Attendee[]) => {
+  generateTeams = async (attendance: Attendee[]) => {
     let bestTeams: {
       team1: TeamMember[];
       team2: TeamMember[];
@@ -83,7 +83,7 @@ export class PlayersService {
     team1: TeamMember[];
     team2: TeamMember[];
   } {
-    if (people.length !== 8) {
+    if (people.length !== people.length) {
       return {
         team1: [],
         team2: [],
