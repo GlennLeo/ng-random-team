@@ -21,10 +21,8 @@
         </p>
       </div>
       <div class="w-full lg:w-4/5">
-        <div
-          class="flex flex-col flex-1 gap-10 lg:gap-0 lg:flex-row lg:justify-between"
-        >
-          <div class="block">
+        <div class="flex flex-col flex-1 gap-10 lg:flex-row lg:justify-between">
+          <div class="flex flex-col justify-center items-center rounded p-4">
             <div
               class="font-manrope font-bold text-4xl text-yellow-600 mb-3 text-center lg:text-left"
             >
@@ -34,7 +32,7 @@
               >Tổng số trận đấu
             </span>
           </div>
-          <div class="block">
+          <div class="flex flex-col justify-center items-center rounded p-4">
             <div
               class="font-manrope font-bold text-4xl text-yellow-600 mb-3 text-center lg:text-left"
             >
@@ -44,7 +42,7 @@
               >Số trận thắng
             </span>
           </div>
-          <div class="block">
+          <div class="flex flex-col justify-center items-center rounded p-4">
             <div
               class="font-manrope font-bold text-4xl text-yellow-600 mb-3 text-center lg:text-left"
             >
@@ -54,7 +52,7 @@
               >Số trận thua</span
             >
           </div>
-          <div class="block">
+          <div class="flex flex-col justify-center items-center rounded p-4">
             <div
               class="font-manrope font-bold text-4xl text-yellow-600 mb-3 text-center lg:text-left"
             >
@@ -84,16 +82,18 @@
       </div>
       <div class="w-full lg:w-4/5">
         <div
-          class="flex flex-col flex-1 gap-10 lg:gap-0 lg:flex-row lg:justify-between"
+          class="flex flex-row flex-1 gap-10 lg:gap-2 flex-wrap justify-center lg:justify-start"
         >
           @for (heroStat of statistic.hero_statistics; track heroStat.hero) {
-          <div class="block">
+          <div
+            class="flex flex-col justify-center items-center w-[100px] border rounded border-gray-400 p-4"
+          >
             <div
               class="font-manrope font-bold text-4xl text-yellow-600 mb-3 text-center lg:text-left"
             >
               {{ heroStat.games_played }}
             </div>
-            <span class="text-white text-center block lg:text-left"
+            <span class="text-white text-center block font-bold"
               >{{ heroStat.hero }}
             </span>
           </div>
