@@ -1,4 +1,4 @@
-<section class="bg-gray-100 dark:bg-gray-900 p-2">
+<section class="bg-gray-900 p-2">
   <h2 class="flex flex-row flex-nowrap items-center mb-8">
     <span
       class="flex-none block mx-4 px-4 py-2.5 text-3xl rounded leading-none font-medium text-white"
@@ -16,6 +16,23 @@
       (onRowSelect)="onRowSelect($event)"
       styleClass="my-custom-table"
     >
+      <ng-template pTemplate="caption">
+        <div class="flex">
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input
+              pInputText
+              type="text"
+              #globalFilterInput
+              (input)="dt2.filterGlobal(globalFilterInput.value, 'contains')"
+              placeholder="Tìm theo tên"
+              class="p-2"
+            />
+          </p-iconField>
+        </div>
+      </ng-template>
       <ng-template pTemplate="header">
         <tr>
           <th pSortableColumn="player_id">
