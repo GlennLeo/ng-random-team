@@ -5,11 +5,12 @@ import { SupabaseService } from '../../services/supabase.service';
 import { mean, round } from 'lodash';
 import { formatDate, getDuration } from '../../lib/utils';
 import { ChipModule } from 'primeng/chip';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [BoardColumnComponent, ChipModule],
+  imports: [BoardColumnComponent, ChipModule, CommonModule],
   templateUrl: './history.component.html',
   styleUrl: './history.component.css',
 })
@@ -32,6 +33,7 @@ export class HistoryComponent implements OnInit {
       winningTeam: item.winning_team,
       created_at: formatDate(item.created_at),
       duration: getDuration(item.created_at, item.updated_at),
+      dealer: item.dealer,
     }));
   }
 

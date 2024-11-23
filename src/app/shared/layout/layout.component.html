@@ -31,6 +31,15 @@
             >Thống kê</a
           >
         </li>
+        <li *ngIf="isAuthenticated">
+          <button
+            type="button"
+            (click)="signOut()"
+            class="block py-2 px-3 rounded border-0 md:p-0 hover:text-yellow-500 hover:bg-transparent text-white"
+          >
+            Đăng xuất
+          </button>
+        </li>
       </ul>
     </div>
   </div>

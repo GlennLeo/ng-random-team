@@ -12,6 +12,7 @@ import { Player, TeamMember } from '../models/Player';
 export class SupabaseService {
   private supabase: SupabaseClient;
   private readonly ngZone = inject(NgZone);
+  player = null;
 
   constructor() {
     this.supabase = this.ngZone.runOutsideAngular(() =>
@@ -21,13 +22,36 @@ export class SupabaseService {
       )
     );
   }
+
+  get client(): SupabaseClient {
+    return this.supabase;
+  }
+
+  async checkSession() {
+    const { data, error } = await this.supabase.auth.getSession();
+    return { data, error };
+  }
+
+  async handleSignInWithGoogle() {
+    const { data, error } = await this.supabase.auth.signInWithOAuth({
+      provider: 'google',
+    });
+    return { data, error };
+  }
+
+  async handleSignOut() {
+    console.log('signout');
+    const res = await this.supabase.auth.signOut();
+    console.log({ res });
+  }
+
   async getPlayers() {
     const data = await this.supabase.from('player').select();
     return data as PostgrestSingleResponse<Player[]>;
   }
 
   async getBoardList() {
-    const { data, error } = await this.supabase.rpc('grouped_sessions');
+    const { data, error } = await this.supabase.rpc('grouped_session');
     if (error) {
       console.error('Error fetching grouped sessions:', error);
       return [];
@@ -117,11 +141,15 @@ export class SupabaseService {
   }
 
   async createSession() {
+    const { data: userData } = await this.supabase.auth.getSession();
     const { data, error } = await this.supabase
       .from('session')
       .insert({
         winning_team: null,
         status: 'draft',
+        dealer:
+          userData.session?.user.identities?.[0].identity_data?.['name'] ??
+          userData.session?.user.email,
       })
       .select();
 
