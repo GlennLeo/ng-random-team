@@ -76,11 +76,15 @@ export class DashboardComponent implements OnInit {
   async onSubmit() {}
 
   getMemberTeam1() {
-    return this.memberList.filter((mem) => mem.team === 1);
+    return this.memberList.filter(
+      (mem) => mem.team === 1 && mem.name !== 'Phantom'
+    );
   }
 
   getMemberTeam2() {
-    return this.memberList.filter((mem) => mem.team === 2);
+    return this.memberList.filter(
+      (mem) => mem.team === 2 && mem.name !== 'Phantom'
+    );
   }
   getTeam1Elo() {
     return round(

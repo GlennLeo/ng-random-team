@@ -38,11 +38,15 @@ export class HistoryComponent implements OnInit {
   }
 
   getMemberTeam1(boardSession: BoardSession) {
-    return boardSession.team.filter((member) => +member.team === 1);
+    return boardSession.team.filter(
+      (member) => +member.team === 1 && member.name !== 'Phantom'
+    );
   }
 
   getMemberTeam2(boardSession: BoardSession) {
-    return boardSession.team.filter((member) => +member.team === 2);
+    return boardSession.team.filter(
+      (member) => +member.team === 2 && member.name !== 'Phantom'
+    );
   }
 
   getTeam1Elo(boardSession: BoardSession) {
