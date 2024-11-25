@@ -185,10 +185,7 @@ export class PlayersService {
     }
   };
 
-  async sendWebhookMessageForSessionResult(
-    winningTeam: number,
-    lossingTeam: number
-  ) {
+  async sendWebhookMessageForSessionResult(winningTeam: number) {
     const now = new Date().toLocaleString('en-US', {
       timeZone: 'Asia/Bangkok',
     });
@@ -214,7 +211,7 @@ export class PlayersService {
         import.meta.env.NG_APP_PUBLIC_GG_KEY
       }&token=${import.meta.env.NG_APP_PUBLIC_GG_TOKEN}`;
       const message = {
-        text: `Kết thúc trận đấu: Đội ${winningTeam} thắng! - Đội ${lossingTeam} thua sml!`,
+        text: `Kết thúc trận đấu: Đội *${winningTeam}* thắng! \n Xem kết quả tại: <https://ng-random-team.vercel.app/history|Balance Age>`,
       };
       try {
         const response = await fetch(webhookUrl, {
@@ -240,11 +237,11 @@ export class PlayersService {
       import.meta.env.NG_APP_PUBLIC_GG_KEY
     }&token=${import.meta.env.NG_APP_PUBLIC_GG_TOKEN}`; // Replace with your actual webhook URL
     const message = {
-      text: `Team 1: ${team1
-        .map((member) => `${member.name} - ${member.hero} - ${member.elo}`)
-        .join(', ')}\nTeam 2: ${team2
-        .map((member) => `${member.name} - ${member.hero} - ${member.elo}`)
-        .join(', ')}`,
+      text: `_Đội 1_: * ${team1
+        .map((member) => `*${member.name}* - *${member.hero}* - ${member.elo}`)
+        .join(' | ')}\n_Đội 2_: * ${team2
+        .map((member) => `*${member.name}* - *${member.hero}* - ${member.elo}`)
+        .join(' | ')}`,
     };
     try {
       const response = await fetch(webhookUrl, {

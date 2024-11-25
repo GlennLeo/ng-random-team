@@ -143,8 +143,7 @@ export class DashboardComponent implements OnInit {
     );
     await this.supabase.batchUpdatePlayers(newPlayerList);
     await this.playerService.sendWebhookMessageForSessionResult(
-      this.winningTeam,
-      this.winningTeam === 1 ? 2 : 1
+      this.winningTeam
     );
     this.memberList = newPlayerList;
     this.sessionStatus = '';
