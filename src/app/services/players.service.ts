@@ -184,6 +184,57 @@ export class PlayersService {
       this.sendWebhookMessage(team1, team2);
     }
   };
+
+  async sendWebhookMessageForSessionResult(
+    winningTeam: number,
+    lossingTeam: number
+  ) {
+    const now = new Date().toLocaleString('en-US', {
+      timeZone: 'Asia/Bangkok',
+    });
+    const currentHour = new Date(now).getHours();
+    const currentMinutes = new Date(now).getMinutes();
+    const currentTime = currentHour * 60 + currentMinutes;
+
+    const isWithinTimeRange = (
+      startHour: number,
+      startMinute: number,
+      endHour: number,
+      endMinute: number
+    ) => {
+      const startTime = startHour * 60 + startMinute;
+      const endTime = endHour * 60 + endMinute;
+      return currentTime >= startTime && currentTime <= endTime;
+    };
+
+    const isWithinAllowedTime =
+      isWithinTimeRange(11, 30, 14, 30) || isWithinTimeRange(17, 0, 20, 0);
+    if (isWithinAllowedTime) {
+      const webhookUrl = `https://chat.googleapis.com/v1/spaces/AAAAO5WhQOI/messages?key=${
+        import.meta.env.NG_APP_PUBLIC_GG_KEY
+      }&token=${import.meta.env.NG_APP_PUBLIC_GG_TOKEN}`;
+      const message = {
+        text: `Kết thúc trận đấu: Đội ${winningTeam} thắng! - Đội ${lossingTeam} thua sml!`,
+      };
+      try {
+        const response = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(message),
+        });
+        if (response.ok) {
+          console.log('Message sent to Google Chat');
+        } else {
+          console.error('Failed to send message');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  }
+
   private async sendWebhookMessage(team1: TeamMember[], team2: TeamMember[]) {
     const webhookUrl = `https://chat.googleapis.com/v1/spaces/AAAAO5WhQOI/messages?key=${
       import.meta.env.NG_APP_PUBLIC_GG_KEY
