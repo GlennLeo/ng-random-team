@@ -190,9 +190,9 @@ export class PlayersService {
     }&token=${import.meta.env.NG_APP_PUBLIC_GG_TOKEN}`; // Replace with your actual webhook URL
     const message = {
       text: `Team 1: ${team1
-        .map((member) => `${member.name} - ${member.hero}`)
+        .map((member) => `${member.name} - ${member.hero} - ${member.elo}`)
         .join(', ')}\nTeam 2: ${team2
-        .map((member) => `${member.name} - ${member.hero}`)
+        .map((member) => `${member.name} - ${member.hero} - ${member.elo}`)
         .join(', ')}`,
     };
     try {
