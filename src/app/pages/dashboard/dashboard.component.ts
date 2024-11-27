@@ -4,7 +4,7 @@ import { Attendee, TeamMember } from '../../models/Player';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
 import { CommonModule } from '@angular/common';
-import { mean, round } from 'lodash';
+import { round } from 'lodash';
 import { PlayersService } from '../../services/players.service';
 import { NgButtonComponent } from '../../shared/button/ng-button/ng-button.component';
 import { calculatePlayerPoints, updateAttendance } from '../../lib/utils';

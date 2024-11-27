@@ -35,9 +35,7 @@
       </ng-template>
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="player_id">
-            Id <p-sortIcon field="player_id" />
-          </th>
+          <th>Thứ tự <p-sortIcon /></th>
           <th pSortableColumn="player_name" style="width: 15%">
             Tên <p-sortIcon field="player_name" />
           </th>
@@ -58,9 +56,9 @@
           </th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-player>
+      <ng-template pTemplate="body" let-player let-i="rowIndex">
         <tr [pSelectableRow]="player">
-          <td>{{ player.player_id }}</td>
+          <td>{{ i + 1 }}</td>
           <td>{{ player.player_name }}</td>
           <td>{{ player.elo }}</td>
           <td>{{ player.win_rate }}%</td>
