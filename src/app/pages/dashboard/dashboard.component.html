@@ -1,134 +1,137 @@
-<form
-  #form="ngForm"
-  class="bg-slate-900 w-full h-full mx-auto"
-  (ngSubmit)="onSubmit()"
->
-  <div class="flex flex-col justify-center items-center">
-    <div id="container" class="flex-auto">
-      <div
-        class="grid grid-cols-2 bg-gray-800 justify-center sm:w-full md:w-[700px] mx-auto border-2 border-gray-400 p-2 divide-x divide-gray-400 divide-opacity-40 rounded"
-      >
-        <app-board-column
-          [teamName]="'Team 1'"
-          [elo]="getTeam1Elo()"
-          [memberList]="getMemberTeam1()"
-        ></app-board-column>
-        <app-board-column
-          [teamName]="'Team 2'"
-          [elo]="getTeam2Elo()"
-          [memberList]="getMemberTeam2()"
-        ></app-board-column>
-      </div>
-      @if (getMemberTeam1().length && getMemberTeam2().length && !done) {
-      <div class="flex justify-center items-center gap-4 mt-4">
-        <app-ng-button
-          buttonText="Start"
-          buttonType="button"
-          (buttonClick)="onStart()"
-          [disabled]="['confirmed', 'finished'].includes(sessionStatus)"
-        ></app-ng-button>
-        <app-ng-button
-          buttonText="Finish"
-          buttonType="button"
-          (buttonClick)="onFinish()"
-          [disabled]="sessionStatus === 'finished'"
-        ></app-ng-button>
-      </div>
-      } @if (sessionStatus === 'finished') {
-      <div class="flex items-center justify-center gap-4">
-        <label
-          htmlFor="countries"
-          class="block mb-2 text-sm font-medium text-white"
-        >
-          Đội thắng:
-        </label>
-        <select
-          id="countries"
-          class="bg-black border border-gray-300 text-white text-sm rounded-lg block p-2.5 b placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500 w-[100px]"
-          [(ngModel)]="winningTeam"
-          [name]="'winningTeam'"
-        >
-          <option value="1">1</option>
-          <option value="2">2</option>
-        </select>
+<form #form="ngForm" class="pt-[1%] px-8" (ngSubmit)="onSubmit()">
+  @if (getMemberTeam1().length && getMemberTeam2().length && !done) {
+  <div class="flex justify-center items-center gap-4">
+    <app-ng-button
+      buttonText="Start"
+      buttonType="button"
+      (buttonClick)="onStart()"
+      [disabled]="['confirmed', 'finished'].includes(sessionStatus)"
+    ></app-ng-button>
+    <app-ng-button
+      buttonText="Finish"
+      buttonType="button"
+      (buttonClick)="onFinish()"
+      [disabled]="sessionStatus === 'finished'"
+    ></app-ng-button>
+  </div>
+  } @if (sessionStatus === 'finished') {
+  <div class="flex items-center justify-center gap-4">
+    <label
+      htmlFor="countries"
+      class="block mb-2 text-sm font-medium text-white"
+    >
+      Đội thắng:
+    </label>
+    <select
+      id="countries"
+      class="bg-black border border-gray-300 text-white text-sm rounded-lg block p-2.5 b placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500 w-[100px]"
+      [(ngModel)]="winningTeam"
+      [name]="'winningTeam'"
+    >
+      <option value="1">1</option>
+      <option value="2">2</option>
+    </select>
 
-        <app-ng-button
-          buttonText="Submit"
-          buttonType="button"
-          (buttonClick)="updateWinningTeam()"
-        ></app-ng-button>
-      </div>
-      }
-      <div class="rounded px-8 pb-4">
-        @for (attendee of attendance; track $index) {
-        <input
-          type="hidden"
-          [name]="'members' + $index"
-          [(ngModel)]="attendee.name"
-        />
-        }
-        <fieldset class="mt-20 mb-4 sm:w-full md:w-[850px] mx-auto">
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center justify-center gap-4">
-              <label
-                htmlFor="countries"
-                class="block mb-2 text-sm font-medium text-white"
-              >
-                Kèo:
-              </label>
-              <select
-                id="countries"
-                class="bg-black border border-gray-300 text-white text-sm rounded-lg block p-2.5 b placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500 w-[100px]"
-                [(ngModel)]="teamSize"
-                [name]="'teamSize'"
-              >
-                <option value="8">4-4</option>
-                <option value="6">3-3</option>
-              </select>
-            </div>
-            <div class="flex items-center justify-center gap-4">
-              <p class="text-white text-center vertical-align">
-                Số người đã chọn: {{ totalAttendees() }}
-              </p>
-            </div>
-          </div>
-          <div class="flex flex-wrap justify-between gap-8 mb-4 mx-auto">
+    <app-ng-button
+      buttonText="Submit"
+      buttonType="button"
+      (buttonClick)="updateWinningTeam()"
+    ></app-ng-button>
+  </div>
+  }
+  <div class="grid grid-cols-4 gap-4">
+    <!-- TEAM1 -->
+    <div>
+      <app-team-board
+        [teamName]="'Team 1'"
+        [elo]="getTeam1Elo()"
+        [memberList]="getMemberTeam1()"
+      ></app-team-board>
+    </div>
+    <!-- Player board -->
+    <div class="col-span-2 flex flex-col justify-center items-center">
+      <div class="border rounded-lg border-purple-800 p-4">
+        <div id="container" class="flex-auto">
+          <div class="rounded px-8 pb-4">
             @for (attendee of attendance; track $index) {
-            <div key="{name}" class="flex">
-              <input
-                type="checkbox"
-                [id]="'checkbox-' + attendee.name"
-                [name]="'members' + $index"
-                [(ngModel)]="attendee.checked"
-                [checked]="attendee.checked"
-                [disabled]="isDisabled(attendee) || checkSessionLocked()"
-                class="peer hidden"
-              />
-              <label
-                [for]="'checkbox-' + attendee.name"
-                class="ms-2 text-sm text-white select-none cursor-pointer rounded-lg border-2 py-3 px-6 font-bold transition-colors duration-200 ease-in-out peer-checked:border-4 peer-checked:border-double peer-checked:text-white peer-checked:border-yellow-400 peer-checked:bg-gray-400 peer-checked:bg-opacity-30 peer-checked:hover:bg-opacity-10 hover:border-yellow-400 hover:border-double peer-disabled:opacity-40 peer-disabled:text-white peer-disabled:hover:border-white w-[120px] text-center bg-opacity-25"
-              >
-                {{ attendee.name }}
-              </label>
-            </div>
+            <input
+              type="hidden"
+              [name]="'members' + $index"
+              [(ngModel)]="attendee.name"
+            />
             }
+            <fieldset>
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center justify-center gap-4">
+                  <label
+                    htmlFor="countries"
+                    class="block mb-2 text-sm font-medium text-white"
+                  >
+                    Kèo:
+                  </label>
+                  <select
+                    id="countries"
+                    class="bg-black border border-gray-300 text-white text-sm rounded-lg block p-2.5 b placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500 w-[100px]"
+                    [(ngModel)]="teamSize"
+                    [name]="'teamSize'"
+                  >
+                    <option value="8">4-4</option>
+                    <option value="6">3-3</option>
+                  </select>
+                </div>
+                <div class="flex items-center justify-center gap-4">
+                  <p class="text-white text-center vertical-align">
+                    Số người đã chọn: {{ totalAttendees() }}
+                  </p>
+                </div>
+              </div>
+              <div class="flex flex-wrap justify-between gap-8 mb-4 mx-auto">
+                @for (attendee of attendance; track $index) {
+                <div key="{name}" class="flex">
+                  <input
+                    type="checkbox"
+                    [id]="'checkbox-' + attendee.name"
+                    [name]="'members' + $index"
+                    [(ngModel)]="attendee.checked"
+                    [checked]="attendee.checked"
+                    [disabled]="isDisabled(attendee) || checkSessionLocked()"
+                    class="peer hidden"
+                  />
+                  <label
+                    [for]="'checkbox-' + attendee.name"
+                    class="ms-2 text-sm text-white select-none cursor-pointer rounded-lg border-2 py-3 px-6 font-bold transition-colors duration-200 ease-in-out peer-checked:border-4 peer-checked:border-double peer-checked:text-white peer-checked:border-purple-400 peer-checked:bg-gray-400 peer-checked:bg-opacity-30 peer-checked:hover:bg-opacity-10 hover:border-purple-400 hover:border-double peer-disabled:opacity-40 peer-disabled:text-white peer-disabled:hover:border-white w-[120px] text-center bg-opacity-25"
+                  >
+                    {{ attendee.name }}
+                  </label>
+                </div>
+                }
+              </div>
+            </fieldset>
           </div>
-        </fieldset>
+        </div>
+      </div>
+      <div class="flex justify-center items-center gap-4 mt-2">
+        <app-ng-button
+          buttonText="Chia Team"
+          buttonType="button"
+          (buttonClick)="onGenTeam()"
+          [disabled]="checkSessionLocked() || totalAttendees() < teamSize"
+        ></app-ng-button>
+        <app-ng-button
+          buttonText="Chia Quân"
+          buttonType="button"
+          (buttonClick)="onGenHero()"
+          [disabled]="checkSessionLocked() || totalAttendees() < teamSize"
+        ></app-ng-button>
       </div>
     </div>
-    <div class="w-[200px] space-y-4">
-      <app-ng-button
-        buttonText="Chia Team"
-        buttonType="button"
-        (buttonClick)="onGenTeam()"
-        [disabled]="checkSessionLocked() || totalAttendees() < teamSize"
-      ></app-ng-button>
-      <app-ng-button
-        buttonText="Chia Quân"
-        buttonType="button"
-        (buttonClick)="onGenHero()"
-        [disabled]="checkSessionLocked() || totalAttendees() < teamSize"
-      ></app-ng-button>
+    <!-- TEAM2 -->
+    <div>
+      <app-team-board
+        [teamName]="'Team 2'"
+        [elo]="getTeam2Elo()"
+        [memberList]="getMemberTeam2()"
+      ></app-team-board>
     </div>
   </div>
 </form>

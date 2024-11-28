@@ -228,6 +228,16 @@ export class SupabaseService {
     }
     return data;
   }
+  async getPlayersByIdsWithStatistic(ids: string | number[]) {
+    const { data, error } = await this.supabase.rpc('board_players_statistic', {
+      player_ids: ids,
+    });
+    if (error) {
+      console.error('Error fetching board_players_statistic:', error);
+      return [];
+    }
+    return data;
+  }
 
   async batchUpdatePlayers(players: TeamMember[]): Promise<any> {
     try {
