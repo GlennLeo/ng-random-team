@@ -1,0 +1,9 @@
+.neon-text {
+  color: #fff;
+  text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 2px #fff;
+}
+
+.neon-border {
+  box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 0.2rem #1e1b4b,
+    0 0 0.8rem #1e1b4b, 0 0 0.8rem #1e1b4b, inset 0 0 0.3rem #1e1b4b;
+}

@@ -141,15 +141,15 @@ export class DashboardComponent implements OnInit {
           (stat: any) => +stat.player_id === +item.id
         ).total_losses,
         win_rate:
-          find(statistics, (stat: any) => +stat.player_id === +item.id)
+          !find(statistics, (stat: any) => stat.player_id === item.id)
             .total_wins ||
-          find(statistics, (stat: any) => +stat.player_id === +item.id)
+          !find(statistics, (stat: any) => stat.player_id === item.id)
             .total_games
             ? 0
             : round(
-                (statistics.find((stat: any) => +stat.player_id === +item.id)
+                (statistics.find((stat: any) => stat.player_id === item.id)
                   .total_wins /
-                  statistics.find((stat: any) => +stat.player_id === +item.id)
+                  statistics.find((stat: any) => stat.player_id === item.id)
                     .total_games) *
                   100,
                 1
@@ -220,16 +220,19 @@ export class DashboardComponent implements OnInit {
       this.sessionId,
       this.winningTeam
     );
-    // Update elo
-    const newPlayerList = calculatePlayerPoints(
-      this.memberList.filter((player) => player.name !== 'Phantom'),
-      this.winningTeam
-    );
-    await this.supabase.batchUpdatePlayers(newPlayerList);
+    // Update elo only if no Phantom
+    if (this.memberList.some((member) => member.name !== 'Phantom')) {
+      const newPlayerList = calculatePlayerPoints(
+        this.memberList.filter((player) => player.name !== 'Phantom'),
+        this.winningTeam
+      );
+      await this.supabase.batchUpdatePlayers(newPlayerList);
+      this.memberList = newPlayerList;
+    }
+    // Send notification result
     await this.playerService.sendWebhookMessageForSessionResult(
       this.winningTeam
     );
-    this.memberList = newPlayerList;
     this.sessionStatus = '';
     this.done = true;
   }

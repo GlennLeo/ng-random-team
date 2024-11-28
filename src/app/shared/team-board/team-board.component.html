@@ -1,5 +1,5 @@
 <div class="min-h-[200px]">
-  <div class="border-b border-gray-400 border-opacity-40 relative mb-2">
+  <div class="border-b border-purple-400 border-opacity-40 relative mb-2">
     <h1
       class="flex items-center text-3xl font-extrabold text-white text-center justify-center pb-2"
     >
@@ -16,12 +16,12 @@
     @for (member of memberList(); track member.name) {
     <li
       key="{member.name}"
-      class="relative p-2 font-bold overflow-hidden rounded-md border border-purple-400 h-[120px]"
+      class="relative p-2 font-bold overflow-hidden rounded-md border h-[120px] neon-border"
     >
       <div class="flex flex-col">
         <div class="flex justify-between">
           <div>
-            <p class="text-white text-xl">{{ member.name }}</p>
+            <p class="text-white text-xl neon-text">{{ member.name }}</p>
           </div>
           <div
             class="me-2 self-start text-white bg-gradient-to-r from-indigo-800 from-10% via-indigo-500 via-30% to-purple-800 to-90% font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
@@ -47,13 +47,13 @@
             </div>
             <div>
               <p class="text-lg">{{ member.win_rate || 0 }}%</p>
-              <p class="text-sm text-gray-500">RATE</p>
+              <p class="text-sm text-gray-500">WIN RATE</p>
             </div>
           </div>
         </div>
       </div>
       <div
-        class="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 ease-in-out hover:opacity-70"
+        class="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-500 opacity-0 transition duration-300 ease-in-out hover:opacity-70"
       ></div>
     </li>
     }

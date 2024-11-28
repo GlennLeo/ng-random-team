@@ -1,14 +1,14 @@
-<form #form="ngForm" class="pt-[1%] px-8" (ngSubmit)="onSubmit()">
+<form #form="ngForm" class="pt-0 md:pt-[100px] px-8" (ngSubmit)="onSubmit()">
   @if (getMemberTeam1().length && getMemberTeam2().length && !done) {
   <div class="flex justify-center items-center gap-4">
     <app-ng-button
-      buttonText="Start"
+      buttonText="Bắt đầu"
       buttonType="button"
       (buttonClick)="onStart()"
       [disabled]="['confirmed', 'finished'].includes(sessionStatus)"
     ></app-ng-button>
     <app-ng-button
-      buttonText="Finish"
+      buttonText="Kết thúc"
       buttonType="button"
       (buttonClick)="onFinish()"
       [disabled]="sessionStatus === 'finished'"
@@ -39,9 +39,9 @@
     ></app-ng-button>
   </div>
   }
-  <div class="grid grid-cols-4 gap-4">
+  <div class="grid grid-rows md:grid-cols-4 gap-4">
     <!-- TEAM1 -->
-    <div>
+    <div class="col-span-2 md:col-auto">
       <app-team-board
         [teamName]="'Team 1'"
         [elo]="getTeam1Elo()"
@@ -52,7 +52,7 @@
     <div class="col-span-2 flex flex-col justify-center items-center">
       <div class="border rounded-lg border-purple-800 p-4">
         <div id="container" class="flex-auto">
-          <div class="rounded px-8 pb-4">
+          <div class="p-0 rounded md:px-8 md:pb-4">
             @for (attendee of attendance; track $index) {
             <input
               type="hidden"
@@ -110,7 +110,7 @@
           </div>
         </div>
       </div>
-      <div class="flex justify-center items-center gap-4 mt-2">
+      <div class="flex justify-center items-center gap-4 mt-8">
         <app-ng-button
           buttonText="Chia Team"
           buttonType="button"
@@ -126,7 +126,7 @@
       </div>
     </div>
     <!-- TEAM2 -->
-    <div>
+    <div class="row-start-2 col-span-2 md:row-auto md:col-auto">
       <app-team-board
         [teamName]="'Team 2'"
         [elo]="getTeam2Elo()"

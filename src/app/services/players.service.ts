@@ -21,7 +21,7 @@ export class PlayersService {
     };
     let lowestDifference = Infinity;
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 50; i++) {
       const { team1, team2 } = this.generateTeamsWithMinScore(attendance);
       const team1Elo = team1.reduce((acc, person) => acc + person.elo, 0);
       const team2Elo = team2.reduce((acc, person) => acc + person.elo, 0);
@@ -237,10 +237,10 @@ export class PlayersService {
       import.meta.env.NG_APP_PUBLIC_GG_KEY
     }&token=${import.meta.env.NG_APP_PUBLIC_GG_TOKEN}`; // Replace with your actual webhook URL
     const message = {
-      text: `_Đội 1_: * ${team1
-        .map((member) => `*${member.name}* - *${member.hero}* - ${member.elo}`)
-        .join(' | ')}\n_Đội 2_: * ${team2
-        .map((member) => `*${member.name}* - *${member.hero}* - ${member.elo}`)
+      text: `_Đội 1_:  ${team1
+        .map((member) => `*${member.name}* - ${member.hero} - ${member.elo}`)
+        .join(' | ')}\n_Đội 2_:  ${team2
+        .map((member) => `*${member.name}* - ${member.hero} - ${member.elo}`)
         .join(' | ')}`,
     };
     try {
