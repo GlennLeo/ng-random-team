@@ -8,92 +8,7 @@ import { PlayersService } from '../../services/players.service';
 import { NgButtonComponent } from '../../shared/button/ng-button/ng-button.component';
 import { calculatePlayerPoints, updateAttendance } from '../../lib/utils';
 import { TeamBoardComponent } from '../../shared/team-board/team-board.component';
-
-const mockTeamMembers: TeamMember[] = [
-  // Team 1
-  {
-    id: 100,
-    hero: '',
-    name: '',
-    elo: 0,
-    team: 1,
-    total_wins: 0,
-    total_losts: 0,
-    win_rate: 0,
-  },
-  {
-    id: 200,
-    hero: '',
-    name: '',
-    elo: 0,
-    team: 1,
-    total_wins: 0,
-    total_losts: 0,
-    win_rate: 0,
-  },
-  {
-    id: 300,
-    hero: '',
-    name: '',
-    elo: 0,
-    team: 1,
-    total_wins: 0,
-    total_losts: 0,
-    win_rate: 0,
-  },
-  {
-    id: 400,
-    hero: '',
-    name: '',
-    elo: 0,
-    team: 1,
-    total_wins: 0,
-    total_losts: 0,
-    win_rate: 0,
-  },
-
-  // Team 2
-  {
-    id: 500,
-    hero: '',
-    name: '',
-    elo: 0,
-    team: 2,
-    total_wins: 0,
-    total_losts: 0,
-    win_rate: 0,
-  },
-  {
-    id: 600,
-    hero: '',
-    name: '',
-    elo: 0,
-    team: 2,
-    total_wins: 0,
-    total_losts: 0,
-    win_rate: 0,
-  },
-  {
-    id: 700,
-    hero: '',
-    name: '',
-    elo: 0,
-    team: 2,
-    total_wins: 0,
-    total_losts: 0,
-    win_rate: 0,
-  },
-  {
-    id: 800,
-    hero: '',
-    name: '',
-    elo: 0,
-    team: 2,
-    total_wins: 0,
-    total_losts: 0,
-    win_rate: 0,
-  },
-];
+import { membersPlaceholder33, membersPlaceholder44 } from '../../lib/constant';
 
 @Component({
   selector: 'app-dashboard',
@@ -240,7 +155,8 @@ export class DashboardComponent implements OnInit {
       checked: false,
     }));
     if (this.manualMode) {
-      this.memberList = mockTeamMembers.slice(0, +this.teamSize);
+      this.memberList =
+        this.teamSize === 6 ? membersPlaceholder33 : membersPlaceholder44;
     } else {
       this.memberList = [];
     }
