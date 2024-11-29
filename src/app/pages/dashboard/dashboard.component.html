@@ -1,6 +1,21 @@
-<form #form="ngForm" class="pt-0 md:pt-[100px] px-8" (ngSubmit)="onSubmit()">
-  @if (getMemberTeam1().length && getMemberTeam2().length && !done) {
-  <div class="flex justify-center items-center gap-4">
+<form #form="ngForm" class="pt-0 px-8" (ngSubmit)="onSubmit()">
+  <label class="inline-flex items-center cursor-pointer mb-8">
+    <input
+      type="checkbox"
+      class="sr-only peer"
+      (change)="toggleManualMode($event)"
+      [checked]="manualMode"
+      [name]="'manualMode'"
+    />
+    <div
+      class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+    ></div>
+    <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+      >Chia thủ công</span
+    >
+  </label>
+  @if (totalAttendees() === +teamSize && !done) {
+  <div class="flex justify-center items-center gap-4 mb-8">
     <app-ng-button
       buttonText="Bắt đầu"
       buttonType="button"
@@ -43,14 +58,18 @@
     <!-- TEAM1 -->
     <div class="col-span-2 md:col-auto">
       <app-team-board
+        [team]="1"
         [teamName]="'Team 1'"
         [elo]="getTeam1Elo()"
         [memberList]="getMemberTeam1()"
+        [attendance]="attendance"
       ></app-team-board>
     </div>
     <!-- Player board -->
     <div class="col-span-2 flex flex-col justify-center items-center">
-      <div class="border rounded-lg border-purple-800 p-4">
+      <div
+        class="border rounded-lg border-purple-800 p-4 bg-gray-900 bg-opacity-60"
+      >
         <div id="container" class="flex-auto">
           <div class="p-0 rounded md:px-8 md:pb-4">
             @for (attendee of attendance; track $index) {
@@ -87,14 +106,16 @@
               </div>
               <div class="flex flex-wrap justify-between gap-8 mb-4 mx-auto">
                 @for (attendee of attendance; track $index) {
-                <div key="{name}" class="flex">
+                <div key="{attendee.name}" class="flex">
                   <input
                     type="checkbox"
                     [id]="'checkbox-' + attendee.name"
                     [name]="'members' + $index"
                     [(ngModel)]="attendee.checked"
                     [checked]="attendee.checked"
-                    [disabled]="isDisabled(attendee) || checkSessionLocked()"
+                    [disabled]="
+                      isDisabled(attendee) || checkSessionLocked() || manualMode
+                    "
                     class="peer hidden"
                   />
                   <label
@@ -102,6 +123,9 @@
                     class="ms-2 text-sm text-white select-none cursor-pointer rounded-lg border-2 py-3 px-6 font-bold transition-colors duration-200 ease-in-out peer-checked:border-4 peer-checked:border-double peer-checked:text-white peer-checked:border-purple-400 peer-checked:bg-gray-400 peer-checked:bg-opacity-30 peer-checked:hover:bg-opacity-10 hover:border-purple-400 hover:border-double peer-disabled:opacity-40 peer-disabled:text-white peer-disabled:hover:border-white w-[120px] text-center bg-opacity-25"
                   >
                     {{ attendee.name }}
+                    <div *ngIf="manualMode">
+                      {{ attendee.elo }}
+                    </div>
                   </label>
                 </div>
                 }
@@ -128,9 +152,11 @@
     <!-- TEAM2 -->
     <div class="row-start-2 col-span-2 md:row-auto md:col-auto">
       <app-team-board
+        [team]="2"
         [teamName]="'Team 2'"
         [elo]="getTeam2Elo()"
         [memberList]="getMemberTeam2()"
+        [attendance]="attendance"
       ></app-team-board>
     </div>
   </div>

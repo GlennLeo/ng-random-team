@@ -11,7 +11,7 @@ export class PlayersService {
 
   constructor() {}
 
-  generateTeams = async (attendance: Attendee[]) => {
+  generateTeams = async (attendance: Attendee[], manualMode: boolean) => {
     let bestTeams: {
       team1: TeamMember[];
       team2: TeamMember[];
@@ -22,7 +22,7 @@ export class PlayersService {
     let lowestDifference = Infinity;
 
     for (let i = 0; i < 50; i++) {
-      const { team1, team2 } = this.generateTeamsWithMinScore(attendance);
+      const { team1, team2 } = this.genTeamRandomly(attendance);
       const team1Elo = team1.reduce((acc, person) => acc + person.elo, 0);
       const team2Elo = team2.reduce((acc, person) => acc + person.elo, 0);
       const difference = Math.abs(team1Elo - team2Elo);
@@ -48,13 +48,13 @@ export class PlayersService {
     }));
     console.log({ team1WithHero });
     console.log({ team2WithHero });
-    this.handleSendWebhookMessage(team1WithHero, team2WithHero);
+    this.handleSendWebhookMessage(manualMode, team1WithHero, team2WithHero);
     return {
       team: [...team1WithHero, ...team2WithHero],
     };
   };
 
-  generateHeroes = async (memberList: TeamMember[]) => {
+  generateHeroes = async (memberList: TeamMember[], manualMode: boolean) => {
     const hero1 = this.selectTeam();
     const hero2 = this.selectTeam();
     const team1WithHero = memberList
@@ -73,28 +73,14 @@ export class PlayersService {
       }));
     console.log({ team1WithHero });
     console.log({ team2WithHero });
-    this.handleSendWebhookMessage(team1WithHero, team2WithHero);
+    this.handleSendWebhookMessage(manualMode, team1WithHero, team2WithHero);
     return {
       team: [...team1WithHero, ...team2WithHero],
     };
   };
 
-  private generateTeamsWithMinScore(people: Attendee[]): {
-    team1: TeamMember[];
-    team2: TeamMember[];
-  } {
-    if (people.length !== people.length) {
-      return {
-        team1: [],
-        team2: [],
-      };
-    }
-
-    return this.genTeamRandomly(people);
-  }
-
   private genTeamRandomly = (people: Attendee[]) => {
-    if (people.length !== people.length) {
+    if (people.length % 2 !== 0) {
       return {
         team1: [],
         team2: [],
@@ -157,6 +143,7 @@ export class PlayersService {
   };
 
   private handleSendWebhookMessage = (
+    manualMode: boolean,
     team1: TeamMember[],
     team2: TeamMember[]
   ) => {
@@ -181,7 +168,7 @@ export class PlayersService {
     const isWithinAllowedTime =
       isWithinTimeRange(11, 30, 13, 30) || isWithinTimeRange(17, 0, 20, 0);
     if (isWithinAllowedTime) {
-      this.sendWebhookMessage(team1, team2);
+      this.sendWebhookMessage(manualMode, team1, team2);
     }
   };
 
@@ -232,12 +219,18 @@ export class PlayersService {
     }
   }
 
-  private async sendWebhookMessage(team1: TeamMember[], team2: TeamMember[]) {
+  private async sendWebhookMessage(
+    manualMode: boolean,
+    team1: TeamMember[],
+    team2: TeamMember[]
+  ) {
     const webhookUrl = `https://chat.googleapis.com/v1/spaces/AAAAO5WhQOI/messages?key=${
       import.meta.env.NG_APP_PUBLIC_GG_KEY
     }&token=${import.meta.env.NG_APP_PUBLIC_GG_TOKEN}`; // Replace with your actual webhook URL
     const message = {
-      text: `_Đội 1_:  ${team1
+      text: `Chế độ quay: ${
+        manualMode ? 'Thủ công' : 'Tự động'
+      } \n_Đội 1_:  ${team1
         .map((member) => `*${member.name}* - ${member.hero} - ${member.elo}`)
         .join(' | ')}\n_Đội 2_:  ${team2
         .map((member) => `*${member.name}* - ${member.hero} - ${member.elo}`)

@@ -13,9 +13,10 @@
     </h1>
   </div>
   <ol class="text-center grid grid-cols-1 gap-4">
-    @for (member of memberList(); track member.name) {
+    @for (member of memberList(); track member.id) {
     <li
-      key="{member.name}"
+      *ngIf="member.name"
+      key="{member.id}"
       class="relative p-2 font-bold overflow-hidden rounded-md border h-[120px] neon-border"
     >
       <div class="flex flex-col">
@@ -52,9 +53,40 @@
           </div>
         </div>
       </div>
-      <div
-        class="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-500 opacity-0 transition duration-300 ease-in-out hover:opacity-70"
-      ></div>
+      <button
+        type="button"
+        class="absolute top-auto right-0 bottom-0 left-auto rounded-md p-2 inline-flex items-center justify-center text-red-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 hover:bg-purple-200"
+        (click)="removePlayer(member.name, $index)"
+      >
+        <!-- Heroicon name: outline/x -->
+        <svg
+          class="h-6 w-6"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </li>
+    <li
+      *ngIf="!member.name"
+      key="{member.id}"
+      class="relative p-2 font-bold overflow-hidden rounded-md border h-[120px] neon-border"
+    >
+      <p-dropdown
+        [options]="getAvailableAttendees()"
+        optionLabel="name"
+        placeholder="Select a Player"
+        (onChange)="onPlayerChange($event, $index)"
+      />
     </li>
     }
   </ol>

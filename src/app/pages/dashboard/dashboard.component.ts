@@ -1,5 +1,4 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { BoardColumnComponent } from '../../shared/board-column/board-column.component';
 import { Attendee, TeamMember } from '../../models/Player';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
@@ -9,6 +8,92 @@ import { PlayersService } from '../../services/players.service';
 import { NgButtonComponent } from '../../shared/button/ng-button/ng-button.component';
 import { calculatePlayerPoints, updateAttendance } from '../../lib/utils';
 import { TeamBoardComponent } from '../../shared/team-board/team-board.component';
+
+const mockTeamMembers: TeamMember[] = [
+  // Team 1
+  {
+    id: 100,
+    hero: '',
+    name: '',
+    elo: 0,
+    team: 1,
+    total_wins: 0,
+    total_losts: 0,
+    win_rate: 0,
+  },
+  {
+    id: 200,
+    hero: '',
+    name: '',
+    elo: 0,
+    team: 1,
+    total_wins: 0,
+    total_losts: 0,
+    win_rate: 0,
+  },
+  {
+    id: 300,
+    hero: '',
+    name: '',
+    elo: 0,
+    team: 1,
+    total_wins: 0,
+    total_losts: 0,
+    win_rate: 0,
+  },
+  {
+    id: 400,
+    hero: '',
+    name: '',
+    elo: 0,
+    team: 1,
+    total_wins: 0,
+    total_losts: 0,
+    win_rate: 0,
+  },
+
+  // Team 2
+  {
+    id: 500,
+    hero: '',
+    name: '',
+    elo: 0,
+    team: 2,
+    total_wins: 0,
+    total_losts: 0,
+    win_rate: 0,
+  },
+  {
+    id: 600,
+    hero: '',
+    name: '',
+    elo: 0,
+    team: 2,
+    total_wins: 0,
+    total_losts: 0,
+    win_rate: 0,
+  },
+  {
+    id: 700,
+    hero: '',
+    name: '',
+    elo: 0,
+    team: 2,
+    total_wins: 0,
+    total_losts: 0,
+    win_rate: 0,
+  },
+  {
+    id: 800,
+    hero: '',
+    name: '',
+    elo: 0,
+    team: 2,
+    total_wins: 0,
+    total_losts: 0,
+    win_rate: 0,
+  },
+];
 
 @Component({
   selector: 'app-dashboard',
@@ -24,6 +109,7 @@ export class DashboardComponent implements OnInit {
   sessionId = 0;
   sessionStatus = '';
   winningTeam = 0;
+  manualMode = false;
   done = false;
 
   private readonly supabase = inject(SupabaseService);
@@ -80,12 +166,21 @@ export class DashboardComponent implements OnInit {
 
   async getPlayers() {
     try {
-      const { data } = await this.supabase.getPlayers();
+      const data = await this.supabase.getAllPlayersWithStatistic();
       if (data) {
-        this.attendance = data.map((item) => ({
-          ...item,
+        this.attendance = data.map((player: any) => ({
+          id: player.player_id,
+          hero: '',
+          name: player.player_name,
+          elo: player.elo,
+          team: 0,
+          total_wins: player.total_wins,
+          total_losts: player.total_losses,
           checked: false,
-          elo: item.elo,
+          win_rate:
+            !player.total_wins || !player.total_games
+              ? 0
+              : round((player.total_wins / player.total_games) * 100, 1),
         }));
       }
     } catch (error) {}
@@ -103,16 +198,28 @@ export class DashboardComponent implements OnInit {
   async onSubmit() {}
 
   getMemberTeam1() {
-    return this.memberList.filter(
-      (mem) => mem.team === 1 && mem.name !== 'Phantom'
-    );
+    return this.manualMode
+      ? this.memberList.filter((mem) => mem.team === 1)
+      : this.memberList.filter(
+          (mem) => mem.team === 1 && mem.name !== 'Phantom'
+        );
   }
 
   getMemberTeam2() {
-    return this.memberList.filter(
-      (mem) => mem.team === 2 && mem.name !== 'Phantom'
-    );
+    return this.manualMode
+      ? this.memberList.filter((mem) => mem.team === 2)
+      : this.memberList.filter(
+          (mem) => mem.team === 2 && mem.name !== 'Phantom'
+        );
   }
+
+  getTotalReadyMembers() {
+    return this.manualMode
+      ? this.getMemberTeam1().filter((player) => player.name).length +
+          this.getMemberTeam2().filter((player) => player.name).length
+      : this.getMemberTeam1().length + this.getMemberTeam2().length;
+  }
+
   getTeam1Elo() {
     return round(
       this.getMemberTeam1().reduce((acc, member) => acc + member.elo, 0),
@@ -126,9 +233,32 @@ export class DashboardComponent implements OnInit {
     );
   }
 
+  toggleManualMode(event: any) {
+    this.manualMode = event.target.checked;
+    this.attendance = this.attendance.map((player) => ({
+      ...player,
+      checked: false,
+    }));
+    if (this.manualMode) {
+      this.memberList = mockTeamMembers;
+    } else {
+      this.memberList = [];
+    }
+  }
+
+  onSelect(event: any, attendee: Attendee) {
+    console.log(event);
+    console.log(attendee);
+    if (this.memberList.some((mem) => mem.id === attendee.id)) {
+    }
+  }
+
   async onGenTeam() {
     this.done = false;
-    const data = await this.playerService.generateTeams(this.getAttendance());
+    const data = await this.playerService.generateTeams(
+      this.getAttendance(),
+      this.manualMode
+    );
     const statistics = await this.supabase.getPlayersByIdsWithStatistic(
       data.team.map((item) => item.id)
     );
@@ -166,7 +296,10 @@ export class DashboardComponent implements OnInit {
 
   async onGenHero() {
     this.done = false;
-    const data = await this.playerService.generateHeroes(this.memberList);
+    const data = await this.playerService.generateHeroes(
+      this.memberList,
+      this.manualMode
+    );
     const statistics = await this.supabase.getPlayersByIdsWithStatistic(
       data.team.map((item) => item.id)
     );

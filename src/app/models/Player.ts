@@ -4,10 +4,6 @@ export class Player {
   elo: number = 0;
 }
 
-export class Attendee extends Player {
-  checked: boolean = false;
-}
-
 export class TeamMember {
   id: number = 0;
   hero: string = '';
@@ -17,6 +13,10 @@ export class TeamMember {
   total_wins?: number = 0;
   total_losts?: number = 0;
   win_rate?: number = 0;
+}
+
+export class Attendee extends TeamMember {
+  checked: boolean = false;
 }
 
 export interface PlayerSession {

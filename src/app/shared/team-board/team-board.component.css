@@ -7,3 +7,10 @@
   box-shadow: 0 0 0.2rem #fff, 0 0 0.2rem #fff, 0 0 0.2rem #1e1b4b,
     0 0 0.8rem #1e1b4b, 0 0 0.8rem #1e1b4b, inset 0 0 0.3rem #1e1b4b;
 }
+
+::ng-deep .p-dropdown .p-dropdown-items-wrapper {
+  /* Your custom styles here */
+  max-height: 500px !important;
+  background-color: #1e1b4b;
+  position: fixed !important;
+}
