@@ -240,7 +240,7 @@ export class DashboardComponent implements OnInit {
       checked: false,
     }));
     if (this.manualMode) {
-      this.memberList = mockTeamMembers;
+      this.memberList = mockTeamMembers.slice(0, +this.teamSize);
     } else {
       this.memberList = [];
     }
