@@ -109,6 +109,12 @@ export class DashboardComponent implements OnInit {
     const selectedCount = this.getAttendance().length;
     return selectedCount;
   }
+  totalMembers(): number {
+    const selectedCount = this.memberList.filter(
+      (player) => !!player.hero
+    ).length;
+    return selectedCount;
+  }
 
   async onSubmit() {}
 
@@ -156,16 +162,17 @@ export class DashboardComponent implements OnInit {
     }));
     if (this.manualMode) {
       this.memberList =
-        this.teamSize === 6 ? membersPlaceholder33 : membersPlaceholder44;
+        +this.teamSize === 6 ? membersPlaceholder33 : membersPlaceholder44;
     } else {
       this.memberList = [];
     }
   }
 
-  onSelect(event: any, attendee: Attendee) {
-    console.log(event);
-    console.log(attendee);
-    if (this.memberList.some((mem) => mem.id === attendee.id)) {
+  onChangeTeamSize(event: any) {
+    this.teamSize = +event.target.value;
+    if (this.manualMode) {
+      this.memberList =
+        +event.target.value === 6 ? membersPlaceholder33 : membersPlaceholder44;
     }
   }
 
@@ -204,7 +211,9 @@ export class DashboardComponent implements OnInit {
     } else {
       this.memberList = data.team;
     }
-    console.log(this.memberList);
+    // Delete the last draft session if any
+    await this.supabase.deleteDraftSession(this.sessionId);
+    // Create new session
     const session = await this.supabase.createSession();
     this.sessionId = session.id;
     localStorage.setItem('sessionId', session.id);
@@ -245,6 +254,11 @@ export class DashboardComponent implements OnInit {
     } else {
       this.memberList = data.team;
     }
+
+    // Delete the last draft session if any
+    await this.supabase.deleteDraftSession(this.sessionId);
+
+    // Create new session
     const session = await this.supabase.createSession();
     this.sessionId = session.id;
     localStorage.setItem('sessionId', session.id);
@@ -291,5 +305,9 @@ export class DashboardComponent implements OnInit {
       this.sessionStatus === 'confirmed' ||
       (this.sessionStatus === 'finished' && !this.done)
     );
+  }
+
+  checkAnyHasNoHero() {
+    return this.memberList.some((player) => !player.hero);
   }
 }

@@ -261,4 +261,18 @@ export class SupabaseService {
       throw error;
     }
   }
+
+  async deleteDraftSession(sessionId: number): Promise<any> {
+    const { data, error } = await this.supabase
+      .from('session')
+      .delete()
+      .eq('id', sessionId)
+      .eq('status', 'draft');
+
+    if (error) {
+      throw new Error(`Failed to delete session: ${error.message}`);
+    }
+
+    console.log('Deleted session:', data);
+  }
 }
