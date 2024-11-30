@@ -47,6 +47,7 @@ export class TeamBoardComponent {
   removePlayer(name: string, index: number) {
     this.memberList.update((oldList) => {
       oldList[index].name = '';
+      oldList[index].elo = 0;
       return oldList;
     });
     this.attendance.update((oldList) => {
