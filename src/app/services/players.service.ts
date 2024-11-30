@@ -224,7 +224,6 @@ export class PlayersService {
     team1: TeamMember[],
     team2: TeamMember[]
   ) {
-    return;
     const webhookUrl = `https://chat.googleapis.com/v1/spaces/AAAAO5WhQOI/messages?key=${
       import.meta.env.NG_APP_PUBLIC_GG_KEY
     }&token=${import.meta.env.NG_APP_PUBLIC_GG_TOKEN}`; // Replace with your actual webhook URL
