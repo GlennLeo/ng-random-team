@@ -36,9 +36,8 @@ export class DashboardComponent implements OnInit {
     await this.getPlayers();
     const latestBoard = (await this.supabase.getLastedBoard()) as any[];
     const statistics = await this.supabase.getPlayersByIdsWithStatistic(
-      this.memberList.map((item) => item.id)
+      latestBoard.map((item) => item.player_id.id)
     );
-    console.log({ statistics });
     if (latestBoard.length) {
       this.memberList = latestBoard.map((item) => ({
         id: item.player_id.id,
@@ -69,6 +68,7 @@ export class DashboardComponent implements OnInit {
                 1
               ),
       }));
+      console.log(this.memberList);
       this.attendance = updateAttendance(this.attendance, this.memberList);
       this.sessionId = latestBoard[0]?.session_id.id;
       this.sessionStatus = latestBoard[0]?.session_id.status;
@@ -163,6 +163,7 @@ export class DashboardComponent implements OnInit {
     if (this.manualMode) {
       this.memberList =
         +this.teamSize === 6 ? membersPlaceholder33 : membersPlaceholder44;
+      this.attendance = updateAttendance(this.attendance, this.memberList);
     } else {
       this.memberList = [];
     }

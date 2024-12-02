@@ -10,7 +10,6 @@
 
 ::ng-deep .p-dropdown .p-dropdown-items-wrapper {
   /* Your custom styles here */
-  max-height: 500px !important;
   background-color: #1e1b4b;
   position: fixed !important;
 }
