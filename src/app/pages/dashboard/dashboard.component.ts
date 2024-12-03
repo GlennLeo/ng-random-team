@@ -73,6 +73,22 @@ export class DashboardComponent implements OnInit {
       this.attendance = updateAttendance(this.attendance, this.memberList);
       this.sessionId = latestBoard[0]?.session_id.id;
       this.sessionStatus = latestBoard[0]?.session_id.status;
+    } else {
+      this.getFromLocalData();
+    }
+  }
+
+  private async getFromLocalData() {
+    const sessionId = localStorage.getItem('sessionId');
+    const memberList = localStorage.getItem('memberList');
+    if (sessionId && memberList) {
+      const sessionInfo = await this.supabase.getBoardBySessionId(+sessionId);
+      console.log({ sessionInfo });
+      if (!sessionInfo.length) {
+        this.sessionId = +sessionId;
+        this.memberList = JSON.parse(memberList);
+        this.attendance = updateAttendance(this.attendance, this.memberList);
+      }
     }
   }
 
@@ -219,6 +235,7 @@ export class DashboardComponent implements OnInit {
     const session = await this.supabase.createSession();
     this.sessionId = session.id;
     localStorage.setItem('sessionId', session.id);
+    localStorage.setItem('memberList', JSON.stringify(this.memberList));
   }
 
   async onGenHero() {
@@ -264,6 +281,7 @@ export class DashboardComponent implements OnInit {
     const session = await this.supabase.createSession();
     this.sessionId = session.id;
     localStorage.setItem('sessionId', session.id);
+    localStorage.setItem('memberList', JSON.stringify(this.memberList));
   }
 
   async onStart() {
@@ -278,6 +296,8 @@ export class DashboardComponent implements OnInit {
     // update session to finished and winning team
     this.supabase.updateSessionStatus(this.sessionId, 'finished');
     this.sessionStatus = 'finished';
+    localStorage.removeItem('sessionId');
+    localStorage.removeItem('memberList');
   }
   async updateWinningTeam() {
     // Update winning team
