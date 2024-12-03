@@ -19,7 +19,7 @@ export class TeamBoardComponent {
   win = input(false);
   isSmall = input(false);
   attendance = model<Attendee[]>();
-  manualMode = input(false);
+  manualMode = model<boolean>(false);
 
   getAvailableAttendees() {
     return this.attendance()?.filter((item) => !item.checked) ?? [];

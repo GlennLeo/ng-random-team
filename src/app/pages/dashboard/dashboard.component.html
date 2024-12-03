@@ -4,8 +4,6 @@
       type="checkbox"
       class="sr-only peer"
       (change)="toggleManualMode($event)"
-      [checked]="manualMode"
-      [name]="'manualMode'"
       [disabled]="checkSessionLocked()"
     />
     <div
@@ -64,6 +62,7 @@
         [elo]="getTeam1Elo()"
         [memberList]="getMemberTeam1()"
         [attendance]="attendance"
+        [manualMode]="manualMode"
       ></app-team-board>
     </div>
     <!-- Player board -->

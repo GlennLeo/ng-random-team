@@ -38,6 +38,7 @@ export class DashboardComponent implements OnInit {
     const statistics = await this.supabase.getPlayersByIdsWithStatistic(
       latestBoard.map((item) => item.player_id.id)
     );
+    console.log(latestBoard);
     if (latestBoard.length) {
       this.memberList = latestBoard.map((item) => ({
         id: item.player_id.id,
@@ -50,7 +51,7 @@ export class DashboardComponent implements OnInit {
         ).total_wins,
         total_losts: statistics.find(
           (stat: any) => stat.player_id === item.player_id.id
-        ).total_losts,
+        ).total_losses,
         win_rate:
           !statistics.find((stat: any) => stat.player_id === item.player_id.id)
             .total_wins ||
@@ -186,14 +187,14 @@ export class DashboardComponent implements OnInit {
     const statistics = await this.supabase.getPlayersByIdsWithStatistic(
       data.team.map((item) => item.id)
     );
+    console.log({ statistics });
     if (statistics.length) {
       this.memberList = data.team.map((item) => ({
         ...item,
         total_wins: find(statistics, (stat: any) => stat.player_id === item.id)
           .total_wins,
-        total_losts: statistics.find(
-          (stat: any) => +stat.player_id === +item.id
-        ).total_losses,
+        total_losts: statistics.find((stat: any) => stat.player_id === item.id)
+          .total_losses,
         win_rate:
           !find(statistics, (stat: any) => stat.player_id === item.id)
             .total_wins ||
