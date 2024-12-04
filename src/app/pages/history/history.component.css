@@ -1,0 +1,9 @@
+:host ::ng-deep .p-paginator .p-highlight {
+  background-color: rgb(49 46 129) !important; /* Green background */
+  color: white !important; /* White text */
+  border-radius: 4px; /* Optional: Rounded corners */
+}
+
+:host ::ng-deep .p-autocomplete > .p-inputtext {
+  padding: 8px !important;
+}

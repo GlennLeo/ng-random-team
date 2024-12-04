@@ -59,6 +59,27 @@ export class SupabaseService {
     return data;
   }
 
+  async searchBoardList({
+    playerName,
+    limit,
+    offset,
+  }: {
+    playerName?: string;
+    limit?: number;
+    offset?: number;
+  }) {
+    const { data, error } = await this.supabase.rpc('board_history', {
+      player_name_input: playerName,
+      page_limit: limit,
+      page_offset: offset,
+    });
+    if (error) {
+      console.error('Error fetching history:', error);
+      return [];
+    }
+    return data;
+  }
+
   async getLatestConfirmedSession() {
     const data = await this.getLatestSessionByStatus('confirmed');
     return data;
