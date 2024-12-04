@@ -140,10 +140,31 @@ export class HistoryComponent implements OnInit {
       dealer: item.dealer,
     }));
   }
-  searchPlayer(event: any) {
+  async searchPlayer(event: any) {
     this.suggestions = this.players.filter((player) =>
       player.name.toLocaleLowerCase().includes(event.query.toLowerCase())
     );
+    if (event.query === '') {
+      const data = await this.supabase.searchBoardList({
+        limit: LIMIT,
+        offset: 0,
+      });
+      this.boardSessions = data.map((item: any) => ({
+        id: item.session_id,
+        team: item.players.map((player: any) => ({
+          id: player.player_id,
+          name: player.name,
+          hero: player.hero,
+          elo: player.elo,
+          team: +player.team,
+        })),
+        winningTeam: item.winning_team,
+        created_at: formatDate(item.created_at),
+        duration: getDuration(item.created_at, item.updated_at),
+        dealer: item.dealer,
+      }));
+      this.total = data[0]?.total_records;
+    }
   }
   async searchHistoryByPlayer(event: any) {
     this.player_name_search = event.value.name;
