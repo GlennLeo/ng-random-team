@@ -1,24 +1,4 @@
-import { shuffle } from 'lodash';
 import { TeamMember } from '../models/Player';
-
-export const team = [
-  { name: 'HungDiv6', elo: 10 },
-  { name: 'PhongBG', elo: 9 },
-  { name: 'Bazemin', elo: 8 },
-  { name: 'Glenn', elo: 7 },
-  { name: 'HongHa', elo: 6 },
-  { name: 'Hunter', elo: 6 },
-  { name: 'Chemdiv2', elo: 6 },
-  { name: 'Taton', elo: 6 },
-  { name: 'Panzai', elo: 6 },
-  { name: 'Hzz', elo: 5.5 },
-  { name: 'Vtpozt', elo: 5.5 },
-  { name: 'KHV', elo: 5.5 },
-  { name: '1ConVit', elo: 3.5 },
-  { name: 'Ga', elo: 2.5 },
-  { name: 'Ebi', elo: 2 },
-  { name: 'Phantom', elo: 0 },
-];
 
 export const heroes = [
   { name: 'Egyptian', tier: 1 },
@@ -38,8 +18,6 @@ export const heroes = [
   { name: 'Carthaginian', tier: 4 },
   { name: 'Greek', tier: 4 },
 ];
-
-export const teamNames = shuffle(team.map((member) => member.name));
 
 export const membersPlaceholder33: TeamMember[] = [
   // Team 1

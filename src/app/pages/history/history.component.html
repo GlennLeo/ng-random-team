@@ -6,6 +6,16 @@
       Lịch sử
     </span>
   </h2>
+  <div class="flex justify-end w-full mb-4">
+    <p-autoComplete
+      [(ngModel)]="player_name_search"
+      [suggestions]="suggestions"
+      (completeMethod)="searchPlayer($event)"
+      (onSelect)="searchHistoryByPlayer($event)"
+      optionLabel="name"
+      placeholder="Tìm kiếm người chơi"
+    />
+  </div>
   <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
     @for (boardSession of boardSessions; track boardSession.id) {
     <article class="bg-gray-700 p-1 rounded flex flex-col gap-2">
@@ -39,5 +49,13 @@
       </div>
     </article>
     }
+  </div>
+  <div class="card w-full flex justify-center mt-8">
+    <p-paginator
+      (onPageChange)="onPageChange($event)"
+      [first]="offset"
+      [rows]="limit"
+      [totalRecords]="total"
+    />
   </div>
 </section>
