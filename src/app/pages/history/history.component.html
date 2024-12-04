@@ -7,13 +7,15 @@
     </span>
   </h2>
   <div class="flex justify-end w-full mb-4">
-    <p-autoComplete
+    <p-dropdown
+      [options]="players"
       [(ngModel)]="player_name_search"
-      [suggestions]="suggestions"
-      (completeMethod)="searchPlayer($event)"
-      (onSelect)="searchHistoryByPlayer($event)"
       optionLabel="name"
-      placeholder="Tìm kiếm người chơi"
+      [showClear]="true"
+      [checkmark]="true"
+      (onClear)="searchBoardListByPlayer()"
+      (onChange)="searchHistoryByPlayer($event)"
+      placeholder="Chọn người chơi"
     />
   </div>
   <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">

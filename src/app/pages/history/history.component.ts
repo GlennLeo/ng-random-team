@@ -2,25 +2,18 @@ import { Component, inject, OnInit } from '@angular/core';
 import { BoardSession } from '../../models/Board';
 import { BoardColumnComponent } from '../../shared/board-column/board-column.component';
 import { SupabaseService } from '../../services/supabase.service';
-import { mean, round } from 'lodash';
+import { round } from 'lodash';
 import { formatDate, getDuration } from '../../lib/utils';
 import { ChipModule } from 'primeng/chip';
 import { CommonModule } from '@angular/common';
 import { PaginatorModule } from 'primeng/paginator';
-import { AutoCompleteModule } from 'primeng/autocomplete';
 
 const LIMIT = 12;
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [
-    BoardColumnComponent,
-    ChipModule,
-    CommonModule,
-    PaginatorModule,
-    AutoCompleteModule,
-  ],
+  imports: [BoardColumnComponent, ChipModule, CommonModule, PaginatorModule],
   templateUrl: './history.component.html',
   styleUrl: './history.component.css',
 })
@@ -33,7 +26,6 @@ export class HistoryComponent implements OnInit {
   total = 0;
   player_name_search = '';
   players = [] as { name: string }[];
-  suggestions = [] as { name: string }[];
   constructor() {}
 
   async ngOnInit(): Promise<void> {
@@ -140,33 +132,9 @@ export class HistoryComponent implements OnInit {
       dealer: item.dealer,
     }));
   }
-  async searchPlayer(event: any) {
-    this.suggestions = this.players.filter((player) =>
-      player.name.toLocaleLowerCase().includes(event.query.toLowerCase())
-    );
-    if (event.query === '') {
-      const data = await this.supabase.searchBoardList({
-        limit: LIMIT,
-        offset: 0,
-      });
-      this.boardSessions = data.map((item: any) => ({
-        id: item.session_id,
-        team: item.players.map((player: any) => ({
-          id: player.player_id,
-          name: player.name,
-          hero: player.hero,
-          elo: player.elo,
-          team: +player.team,
-        })),
-        winningTeam: item.winning_team,
-        created_at: formatDate(item.created_at),
-        duration: getDuration(item.created_at, item.updated_at),
-        dealer: item.dealer,
-      }));
-      this.total = data[0]?.total_records;
-    }
-  }
+
   async searchHistoryByPlayer(event: any) {
+    if (!event.value) return;
     this.player_name_search = event.value.name;
     this.offset = 0;
     this.limit = LIMIT;
