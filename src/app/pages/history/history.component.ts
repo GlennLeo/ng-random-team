@@ -7,9 +7,9 @@ import { formatDate, getDuration } from '../../lib/utils';
 import { ChipModule } from 'primeng/chip';
 import { CommonModule } from '@angular/common';
 import { PaginatorModule } from 'primeng/paginator';
-import { InputTextModule } from 'primeng/inputtext';
-import { FloatLabelModule } from 'primeng/floatlabel';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+
+const LIMIT = 12;
 
 @Component({
   selector: 'app-history',
@@ -29,7 +29,7 @@ export class HistoryComponent implements OnInit {
 
   boardSessions: BoardSession[] = [];
   offset = 0;
-  limit = 10;
+  limit = LIMIT;
   total = 0;
   player_name_search = '';
   players = [] as { name: string }[];
@@ -62,7 +62,7 @@ export class HistoryComponent implements OnInit {
     const data = await this.supabase.searchBoardList({
       playerName: this.player_name_search,
       offset: 0,
-      limit: 10,
+      limit: LIMIT,
     });
     this.boardSessions = data.map((item: any) => ({
       id: item.session_id,
@@ -145,7 +145,7 @@ export class HistoryComponent implements OnInit {
   async searchHistoryByPlayer(event: any) {
     this.player_name_search = event.value.name;
     this.offset = 0;
-    this.limit = 10;
+    this.limit = LIMIT;
     const data = await this.supabase.searchBoardList({
       playerName: this.player_name_search ?? null,
       offset: this.offset,
