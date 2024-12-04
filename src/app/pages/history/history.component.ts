@@ -37,7 +37,10 @@ export class HistoryComponent implements OnInit {
   constructor() {}
 
   async ngOnInit(): Promise<void> {
-    const data = await this.supabase.searchBoardList({});
+    const data = await this.supabase.searchBoardList({
+      limit: LIMIT,
+      offset: 0,
+    });
     const playersData = await this.supabase.getPlayers();
     this.players =
       playersData.data?.map((player: any) => ({ name: player.name })) ?? [];
