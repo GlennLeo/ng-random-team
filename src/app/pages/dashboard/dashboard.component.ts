@@ -286,15 +286,15 @@ export class DashboardComponent implements OnInit {
 
   async onStart() {
     // update session to confirmed
-    this.supabase.updateSessionStatus(this.sessionId, 'confirmed');
+    await this.supabase.updateSessionStatus(this.sessionId, 'confirmed');
 
     this.sessionStatus = 'confirmed';
     // create player session
-    this.supabase.createPlayerSession(this.sessionId, this.memberList);
+    await this.supabase.createPlayerSession(this.sessionId, this.memberList);
   }
   async onFinish() {
     // update session to finished and winning team
-    this.supabase.updateSessionStatus(this.sessionId, 'finished');
+    await this.supabase.updateSessionStatus(this.sessionId, 'finished');
     this.sessionStatus = 'finished';
     localStorage.removeItem('sessionId');
     localStorage.removeItem('memberList');
