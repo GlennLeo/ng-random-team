@@ -199,9 +199,15 @@ export class SupabaseService {
       }));
 
       // Batch insert into player_session
-      await this.supabase.from('player_session').insert(playerSessions);
+      const { error } = await this.supabase
+        .from('player_session')
+        .insert(playerSessions);
+      if (error) {
+        console.error('Batch insert failed:', error.message);
+        throw error;
+      }
     } catch (error) {
-      console.log({ error });
+      throw error;
     }
   }
 
