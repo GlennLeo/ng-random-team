@@ -16,6 +16,10 @@ import {
   membersPlaceholder44,
 } from '../../lib/constant';
 import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-dashboard',
@@ -26,7 +30,11 @@ import { DialogModule } from 'primeng/dialog';
     CommonModule,
     NgButtonComponent,
     DialogModule,
+    ButtonModule,
+    ConfirmDialogModule,
+    ToastModule,
   ],
+  providers: [ConfirmationService, MessageService],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
@@ -43,6 +51,8 @@ export class DashboardComponent implements OnInit {
 
   private readonly supabase = inject(SupabaseService);
   private readonly playerService = inject(PlayersService);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly messageService = inject(MessageService);
 
   constructor() {}
 
@@ -442,5 +452,27 @@ export class DashboardComponent implements OnInit {
     await this.supabase.cancelSession(this.sessionId);
     this.done = false;
     this.sessionStatus = '';
+  }
+
+  onConfirmRemoveSession(event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Bạn có chắc muốn huỷ trận đấu này?',
+      header: 'Xác nhận huỷ',
+      icon: 'pi pi-info-circle',
+      acceptButtonStyleClass: 'p-button-danger p-button-text',
+      rejectButtonStyleClass: 'p-button-text p-button-text',
+      acceptIcon: 'none',
+      rejectIcon: 'none',
+
+      accept: async () => {
+        await this.cancelSession();
+        this.messageService.add({
+          severity: 'info',
+          detail: 'Đã huỷ trận đấu',
+        });
+      },
+      reject: () => {},
+    });
   }
 }
