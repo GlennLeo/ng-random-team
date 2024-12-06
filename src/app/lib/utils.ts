@@ -92,3 +92,29 @@ export function calculatePlayerPoints(
   });
   return updatedPlayers;
 }
+
+export function getGameCategory(team1: TeamMember[], team2: TeamMember[]) {
+  if (!team1 || !team2) return '';
+  const total =
+    team1.filter((player) => player.name !== 'Phantom').length +
+    team2.filter((player) => player.name !== 'Phantom').length;
+  let category = '';
+  switch (total) {
+    case 8:
+      '4 - 4';
+      break;
+    case 6:
+      '3 - 3';
+      break;
+    case 4:
+      '2 - 2';
+      break;
+    case 1:
+      'Solo';
+      break;
+    default:
+      'Buff Elo';
+      break;
+  }
+  return category;
+}

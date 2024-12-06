@@ -289,6 +289,21 @@ export class SupabaseService {
     }
   }
 
+  async checkExistSessionId(sessionId: number) {
+    const { data, error } = await this.supabase
+      .from('session')
+      .select(
+        `
+          id
+        `
+      )
+      .eq('id', sessionId);
+    if (error) {
+      return false;
+    }
+    return !!data.length;
+  }
+
   async deleteDraftSession(sessionId: number): Promise<any> {
     const { data, error } = await this.supabase
       .from('session')
@@ -301,5 +316,36 @@ export class SupabaseService {
     }
 
     console.log('Deleted session:', data);
+  }
+
+  async deleteSessionById(sessionId: number): Promise<any> {
+    const { data, error } = await this.supabase
+      .from('session')
+      .delete()
+      .eq('id', sessionId)
+      .is('winning_team', null); // Only allow to delete non-finished session
+
+    if (error) {
+      throw new Error(`Failed to delete session: ${error.message}`);
+    }
+
+    console.log('Deleted session:', data);
+  }
+
+  async deletePlayerSessionsBySessionId(sessionId: number): Promise<void> {
+    const { data, error } = await this.supabase
+      .from('player_session')
+      .delete()
+      .eq('session_id', sessionId); // Filter rows by session_id
+
+    if (error) {
+      throw new Error(`Failed to delete player sessions: ${error.message}`);
+    }
+
+    console.log('Deleted player sessions:', data);
+  }
+
+  async cancelSession(sessionId: number) {
+    await this.deleteSessionById(sessionId);
   }
 }

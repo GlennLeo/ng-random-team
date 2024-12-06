@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Attendee, TeamMember } from '../models/Player';
-import { shuffle } from 'lodash';
+import { round, shuffle } from 'lodash';
 import { heroes } from '../lib/constant';
+import { getGameCategory } from '../lib/utils';
 
 @Injectable({
   providedIn: 'root',
@@ -42,27 +43,70 @@ export class PlayersService {
   };
 
   generateHeroes = async (memberList: TeamMember[], manualMode: boolean) => {
+    let attempts = 0; // Track attempts to avoid infinite loops
+    const maxAttempts = 2000; // Safety limit for retries
+    let maxScoreDifference = 100;
     const hero1 = this.selectTeam();
     const hero2 = this.selectTeam();
-    const team1WithHero = memberList
+    let team1 = memberList
       .filter((mem) => mem.team === 1)
       .map((person, index) => ({
         ...person,
+        eloWithHero: round(person.elo * hero1[index].rate, 1),
         team: 1,
         hero: hero1[index].name,
       })) as TeamMember[];
-    const team2WithHero = memberList
+    let team2 = memberList
       .filter((mem) => mem.team === 2)
       .map((person, index) => ({
         ...person,
+        eloWithHero: round(person.elo * hero2[index].rate, 1),
         team: 2,
         hero: hero2[index].name,
-      }));
-    console.log({ team1WithHero });
-    console.log({ team2WithHero });
-    this.handleSendWebhookMessage(manualMode, team1WithHero, team2WithHero);
+      })) as TeamMember[];
+
+    while (attempts < maxAttempts) {
+      const hero1 = this.selectTeam();
+      const hero2 = this.selectTeam();
+      const team1WithHero = memberList
+        .filter((mem) => mem.team === 1)
+        .map((person, index) => ({
+          ...person,
+          eloWithHero: round(person.elo * hero1[index].rate, 1),
+          team: 1,
+          hero: hero1[index].name,
+        })) as TeamMember[];
+      const team2WithHero = memberList
+        .filter((mem) => mem.team === 2)
+        .map((person, index) => ({
+          ...person,
+          eloWithHero: round(person.elo * hero2[index].rate, 1),
+          team: 2,
+          hero: hero2[index].name,
+        }));
+      // Calculate the scores of each team
+      const team1Score = team1WithHero.reduce(
+        (sum, player) => sum + (player.eloWithHero ?? player.elo),
+        0
+      );
+      const team2Score = team2WithHero.reduce(
+        (sum, player) => sum + (player.eloWithHero ?? player.elo),
+        0
+      );
+
+      // Check if the score difference condition is met
+      if (Math.abs(team1Score - team2Score) <= maxScoreDifference) {
+        team1 = team1WithHero;
+        team2 = team2WithHero;
+      }
+      attempts++;
+      if (attempts > 1000) {
+        maxScoreDifference = 200;
+      }
+    }
+    this.handleSendWebhookMessage(manualMode, team1, team2);
     return {
-      team: [...team1WithHero, ...team2WithHero],
+      team: [...team1, ...team2],
     };
   };
 
@@ -76,7 +120,7 @@ export class PlayersService {
     const eachTeamCount = people.length / 2;
     let attempts = 0; // Track attempts to avoid infinite loops
     const maxAttempts = 2000; // Safety limit for retries
-    let maxScoreDifference = 200;
+    let maxScoreDifference = 100;
 
     while (attempts < maxAttempts) {
       // Shuffle players randomly
@@ -93,13 +137,13 @@ export class PlayersService {
       const hero2 = this.selectTeam();
       const team1WithHero = team1.map((person, index) => ({
         ...person,
-        eloWithHero: person.elo * hero1[index].rate,
+        eloWithHero: round(person.elo * hero1[index].rate, 1),
         team: 1,
         hero: hero1[index].name,
       })) as TeamMember[];
       const team2WithHero = team2.map((person, index) => ({
         ...person,
-        eloWithHero: person.elo * hero2[index].rate,
+        eloWithHero: round(person.elo * hero2[index].rate, 1),
         team: 2,
         hero: hero2[index].name,
       }));
@@ -119,7 +163,7 @@ export class PlayersService {
       }
       attempts++;
       if (attempts > 1000) {
-        maxScoreDifference = 250;
+        maxScoreDifference = 200;
       }
     }
     // If no result is found, return final last random result
@@ -224,7 +268,7 @@ export class PlayersService {
     const message = {
       text: `Chế độ quay: ${
         manualMode ? 'Thủ công' : 'Tự động'
-      } \n_Đội 1_:  ${team1
+      } \n Thể loại: ${getGameCategory(team1, team2)} \n_Đội 1_:  ${team1
         .map((member) => `*${member.name}* - ${member.hero} - ${member.elo}`)
         .join(' | ')}\n_Đội 2_:  ${team2
         .map((member) => `*${member.name}* - ${member.hero} - ${member.elo}`)
