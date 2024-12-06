@@ -11,6 +11,13 @@
     ></div>
     <span class="ms-3 text-sm font-medium text-white">Chế độ thủ công</span>
   </label>
+  <div class="flex justify-center items-center gap-4 mb-8">
+    <p
+      class="text-6xl font-extrabold bg-gradient-to-bl from-blue-500 to-indigo-800 bg-clip-text text-transparent leading-normal"
+    >
+      {{ getCompetitionCategoryTitle() }}
+    </p>
+  </div>
   @if (totalMembers() === +teamSize && !done ) {
   <div class="flex justify-center items-center gap-4 mb-8">
     <app-ng-button
@@ -25,7 +32,17 @@
       buttonText="Kết thúc"
       buttonType="button"
       (buttonClick)="onFinish()"
-      [disabled]="sessionStatus === 'finished' || checkAnyHasNoHero()"
+      [disabled]="
+        sessionStatus === '' ||
+        sessionStatus === 'finished' ||
+        checkAnyHasNoHero()
+      "
+    ></app-ng-button>
+    <app-ng-button
+      *ngIf="['confirmed', 'finished'].includes(sessionStatus) && !done"
+      buttonText="Huỷ Trận Đấu"
+      buttonType="button"
+      (buttonClick)="cancelSession()"
     ></app-ng-button>
   </div>
   } @if (sessionStatus === 'finished') {
@@ -150,7 +167,11 @@
           buttonText="Chia Quân"
           buttonType="button"
           (buttonClick)="onGenHero()"
-          [disabled]="checkSessionLocked() || totalAttendees() < teamSize"
+          [disabled]="
+            checkSessionLocked() ||
+            totalAttendees() < teamSize ||
+            !this.memberList.length
+          "
         ></app-ng-button>
       </div>
     </div>
@@ -167,4 +188,41 @@
       ></app-team-board>
     </div>
   </div>
+  <p-dialog [(visible)]="lockDialogVisible" modal [style]="{ width: '500px' }">
+    <ng-template pTemplate="headless">
+      <div
+        class="px-8 py-5 gap-4"
+        style="
+          border-radius: 12px;
+          background-image: radial-gradient(
+            circle at left top,
+            var(--primary-400),
+            var(--primary-700)
+          );
+        "
+      >
+        <div>
+          <h2 class="text-4xl font-extrabold text-white">
+            Chốt vội nếu thấy kèo thơm?
+          </h2>
+        </div>
+        <div class="flex items-center justify-between gap-2">
+          <app-ng-button
+            buttonText="OK Chốt"
+            buttonType="button"
+            (buttonClick)="startAndCloseModal()"
+            [disabled]="
+              ['confirmed', 'finished'].includes(sessionStatus) ||
+              checkAnyHasNoHero()
+            "
+          ></app-ng-button>
+          <app-ng-button
+            buttonText="Bỏ qua"
+            buttonType="button"
+            (buttonClick)="closeModal()"
+          ></app-ng-button>
+        </div>
+      </div>
+    </ng-template>
+  </p-dialog>
 </form>

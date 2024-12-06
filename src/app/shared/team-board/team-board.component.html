@@ -41,19 +41,23 @@
         <div class="flex flex-col">
           <div class="flex gap-4 text-sm">
             <div>
-              <p class="text-lg">{{ member.elo || "N/A" }}</p>
+              <p class="text-lg">{{ member.elo }}</p>
               <p class="text-sm text-gray-500">ELO</p>
             </div>
             <div>
-              <p class="text-lg">{{ member.total_wins || "N/A" }}</p>
+              <p class="text-lg">{{ member.eloWithHero }}</p>
+              <p class="text-sm text-gray-500">ELO*</p>
+            </div>
+            <div>
+              <p class="text-lg">{{ member.total_wins ?? "N/A" }}</p>
               <p class="text-sm text-gray-500">WINS</p>
             </div>
             <div>
-              <p class="text-lg">{{ member.total_losts || "N/A" }}</p>
+              <p class="text-lg">{{ member.total_losts ?? "N/A" }}</p>
               <p class="text-sm text-gray-500">LOSES</p>
             </div>
             <div>
-              <p class="text-lg">{{ member.win_rate || 0 }}%</p>
+              <p class="text-lg">{{ member.win_rate ?? "N/A" }}%</p>
               <p class="text-sm text-gray-500">WIN RATE</p>
             </div>
           </div>

@@ -41,6 +41,74 @@ export const heroes = [
 
 export const teamNames = shuffle(team.map((member) => member.name));
 
+export const membersPlaceholder11: TeamMember[] = [
+  // Team 1
+  {
+    id: 100,
+    hero: '',
+    name: '',
+    elo: 0,
+    team: 1,
+    total_wins: 0,
+    total_losts: 0,
+    win_rate: 0,
+  },
+  {
+    id: 700,
+    hero: '',
+    name: '',
+    elo: 0,
+    team: 2,
+    total_wins: 0,
+    total_losts: 0,
+    win_rate: 0,
+  },
+];
+
+export const membersPlaceholder22: TeamMember[] = [
+  // Team 1
+  {
+    id: 100,
+    hero: '',
+    name: '',
+    elo: 0,
+    team: 1,
+    total_wins: 0,
+    total_losts: 0,
+    win_rate: 0,
+  },
+  {
+    id: 200,
+    hero: '',
+    name: '',
+    elo: 0,
+    team: 1,
+    total_wins: 0,
+    total_losts: 0,
+    win_rate: 0,
+  },
+  {
+    id: 600,
+    hero: '',
+    name: '',
+    elo: 0,
+    team: 2,
+    total_wins: 0,
+    total_losts: 0,
+    win_rate: 0,
+  },
+  {
+    id: 700,
+    hero: '',
+    name: '',
+    elo: 0,
+    team: 2,
+    total_wins: 0,
+    total_losts: 0,
+    win_rate: 0,
+  },
+];
+
 export const membersPlaceholder33: TeamMember[] = [
   // Team 1
   {

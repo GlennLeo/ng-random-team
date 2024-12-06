@@ -10,14 +10,23 @@ import { calculatePlayerPoints, updateAttendance } from '../../lib/utils';
 import { TeamBoardComponent } from '../../shared/team-board/team-board.component';
 import {
   heroes,
+  membersPlaceholder11,
+  membersPlaceholder22,
   membersPlaceholder33,
   membersPlaceholder44,
 } from '../../lib/constant';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [TeamBoardComponent, FormsModule, CommonModule, NgButtonComponent],
+  imports: [
+    TeamBoardComponent,
+    FormsModule,
+    CommonModule,
+    NgButtonComponent,
+    DialogModule,
+  ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
@@ -30,6 +39,7 @@ export class DashboardComponent implements OnInit {
   winningTeam = 0;
   manualMode = false;
   done = false;
+  lockDialogVisible = false;
 
   private readonly supabase = inject(SupabaseService);
   private readonly playerService = inject(PlayersService);
@@ -48,9 +58,11 @@ export class DashboardComponent implements OnInit {
         name: item.player_id.name,
         hero: item.hero,
         elo: item.player_id.elo,
-        eloWithHero:
+        eloWithHero: round(
           item.player_id.elo *
-          (heroes.find((hero) => hero.name === item.hero)?.rate || 1),
+            (heroes.find((hero) => hero.name === item.hero)?.rate || 1),
+          1
+        ),
         team: +item.team,
         total_wins: statistics.find(
           (stat: any) => stat.player_id === item.player_id.id
@@ -201,8 +213,22 @@ export class DashboardComponent implements OnInit {
       checked: false,
     }));
     if (this.manualMode) {
-      this.memberList =
-        +this.teamSize === 6 ? membersPlaceholder33 : membersPlaceholder44;
+      switch (this.teamSize) {
+        case 8:
+          this.memberList = membersPlaceholder44;
+          break;
+        case 6:
+          this.memberList = membersPlaceholder33;
+          break;
+        case 4:
+          this.memberList = membersPlaceholder22;
+          break;
+        case 2:
+          this.memberList = membersPlaceholder11;
+          break;
+        default:
+          break;
+      }
       this.attendance = updateAttendance(this.attendance, this.memberList);
     } else {
       this.memberList = [];
@@ -212,8 +238,22 @@ export class DashboardComponent implements OnInit {
   onChangeTeamSize(event: any) {
     this.teamSize = +event.target.value;
     if (this.manualMode) {
-      this.memberList =
-        +event.target.value === 6 ? membersPlaceholder33 : membersPlaceholder44;
+      switch (this.teamSize) {
+        case 8:
+          this.memberList = membersPlaceholder44;
+          break;
+        case 6:
+          this.memberList = membersPlaceholder33;
+          break;
+        case 4:
+          this.memberList = membersPlaceholder22;
+          break;
+        case 2:
+          this.memberList = membersPlaceholder11;
+          break;
+        default:
+          break;
+      }
     }
   }
 
@@ -226,7 +266,6 @@ export class DashboardComponent implements OnInit {
     const statistics = await this.supabase.getPlayersByIdsWithStatistic(
       data.team.map((item) => item.id)
     );
-    console.log({ statistics });
     if (statistics.length) {
       this.memberList = data.team.map((item) => ({
         ...item,
@@ -259,6 +298,7 @@ export class DashboardComponent implements OnInit {
     this.sessionId = session.id;
     localStorage.setItem('sessionId', session.id);
     localStorage.setItem('memberList', JSON.stringify(this.memberList));
+    this.showModal();
   }
 
   async onGenHero() {
@@ -305,9 +345,17 @@ export class DashboardComponent implements OnInit {
     this.sessionId = session.id;
     localStorage.setItem('sessionId', session.id);
     localStorage.setItem('memberList', JSON.stringify(this.memberList));
+    this.showModal();
   }
 
   async onStart() {
+    const isExist = await this.supabase.checkExistSessionId(this.sessionId);
+    if (!isExist) {
+      // create new session
+      const session = await this.supabase.createSession();
+      this.sessionId = session.id;
+      localStorage.setItem('sessionId', session.id);
+    }
     // update session to confirmed
     await this.supabase.updateSessionStatus(this.sessionId, 'confirmed');
 
@@ -354,5 +402,45 @@ export class DashboardComponent implements OnInit {
 
   checkAnyHasNoHero() {
     return this.memberList.some((player) => !player.hero);
+  }
+
+  getCompetitionCategoryTitle() {
+    let title = '';
+    switch (this.teamSize) {
+      case 8:
+        title = '4 vs 4';
+        break;
+      case 6:
+        title = '3 vs 3';
+        break;
+      case 4:
+        title = '2 vs 2';
+        break;
+      case 2:
+        title = 'Solo';
+        break;
+      default:
+        break;
+    }
+    return title;
+  }
+
+  showModal() {
+    this.lockDialogVisible = true;
+  }
+
+  closeModal() {
+    this.lockDialogVisible = false;
+  }
+
+  async startAndCloseModal() {
+    await this.onStart();
+    this.closeModal();
+  }
+
+  async cancelSession() {
+    await this.supabase.cancelSession(this.sessionId);
+    this.done = false;
+    this.sessionStatus = '';
   }
 }
