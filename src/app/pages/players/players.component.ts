@@ -33,7 +33,10 @@ export class PlayersComponent implements OnInit {
       const data = await this.supabase.getAllPlayersWithStatistic();
       if (data) {
         this.players = data
-          .filter((player: any) => player.player_name !== 'Phantom')
+          .filter(
+            (player: any) =>
+              player.player_name !== 'Phantom' && player.total_games > 0
+          )
           .map((player: any) => ({
             ...player,
             win_rate:
