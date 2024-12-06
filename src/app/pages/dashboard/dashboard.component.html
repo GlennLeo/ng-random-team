@@ -60,6 +60,7 @@
         [team]="1"
         [teamName]="'Team 1'"
         [elo]="getTeam1Elo()"
+        [eloWithHero]="getTeam1EloWithHero()"
         [memberList]="getMemberTeam1()"
         [attendance]="attendance"
         [manualMode]="manualMode"
@@ -96,6 +97,8 @@
                   >
                     <option value="8">4-4</option>
                     <option value="6">3-3</option>
+                    <option value="4">2-2</option>
+                    <option value="2">Solo</option>
                   </select>
                 </div>
                 <div class="flex items-center justify-center gap-4">
@@ -157,6 +160,7 @@
         [team]="2"
         [teamName]="'Team 2'"
         [elo]="getTeam2Elo()"
+        [eloWithHero]="getTeam2EloWithHero()"
         [memberList]="getMemberTeam2()"
         [attendance]="attendance"
         [manualMode]="manualMode"

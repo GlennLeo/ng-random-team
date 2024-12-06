@@ -9,6 +9,7 @@ export class TeamMember {
   hero: string = '';
   name: string = '';
   elo: number = 0;
+  eloWithHero?: number = 0;
   team: number = 0;
   total_wins?: number = 0;
   total_losts?: number = 0;

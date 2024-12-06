@@ -21,7 +21,7 @@ export class PlayersService {
     };
     let lowestDifference = Infinity;
 
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 2; i++) {
       const { team1, team2 } = this.genTeamRandomly(attendance);
       const team1Elo = team1.reduce((acc, person) => acc + person.elo, 0);
       const team2Elo = team2.reduce((acc, person) => acc + person.elo, 0);
@@ -34,23 +34,10 @@ export class PlayersService {
     }
 
     const { team1, team2 } = bestTeams;
-    const hero1 = this.selectTeam();
-    const hero2 = this.selectTeam();
-    const team1WithHero = team1.map((person, index) => ({
-      ...person,
-      team: 1,
-      hero: hero1[index].name,
-    })) as TeamMember[];
-    const team2WithHero = team2.map((person, index) => ({
-      ...person,
-      team: 2,
-      hero: hero2[index].name,
-    }));
-    console.log({ team1WithHero });
-    console.log({ team2WithHero });
-    this.handleSendWebhookMessage(manualMode, team1WithHero, team2WithHero);
+
+    this.handleSendWebhookMessage(manualMode, team1, team2);
     return {
-      team: [...team1WithHero, ...team2WithHero],
+      team: [...team1, ...team2],
     };
   };
 
@@ -89,7 +76,7 @@ export class PlayersService {
     const eachTeamCount = people.length / 2;
     let attempts = 0; // Track attempts to avoid infinite loops
     const maxAttempts = 2000; // Safety limit for retries
-    let maxScoreDifference = 150;
+    let maxScoreDifference = 200;
 
     while (attempts < maxAttempts) {
       // Shuffle players randomly
@@ -102,18 +89,37 @@ export class PlayersService {
       // Divide into two teams
       const team1 = shuffledPlayers.slice(0, eachTeamCount);
       const team2 = shuffledPlayers.slice(eachTeamCount);
-
+      const hero1 = this.selectTeam();
+      const hero2 = this.selectTeam();
+      const team1WithHero = team1.map((person, index) => ({
+        ...person,
+        eloWithHero: person.elo * hero1[index].rate,
+        team: 1,
+        hero: hero1[index].name,
+      })) as TeamMember[];
+      const team2WithHero = team2.map((person, index) => ({
+        ...person,
+        eloWithHero: person.elo * hero2[index].rate,
+        team: 2,
+        hero: hero2[index].name,
+      }));
       // Calculate the scores of each team
-      const team1Score = team1.reduce((sum, player) => sum + player.elo, 0);
-      const team2Score = team2.reduce((sum, player) => sum + player.elo, 0);
+      const team1Score = team1WithHero.reduce(
+        (sum, player) => sum + (player.eloWithHero ?? player.elo),
+        0
+      );
+      const team2Score = team2WithHero.reduce(
+        (sum, player) => sum + (player.eloWithHero ?? player.elo),
+        0
+      );
 
       // Check if the score difference condition is met
       if (Math.abs(team1Score - team2Score) <= maxScoreDifference) {
-        return { team1, team2 };
+        return { team1: team1WithHero, team2: team2WithHero };
       }
       attempts++;
       if (attempts > 1000) {
-        maxScoreDifference = 200;
+        maxScoreDifference = 250;
       }
     }
     // If no result is found, return final last random result

@@ -8,7 +8,11 @@ import { PlayersService } from '../../services/players.service';
 import { NgButtonComponent } from '../../shared/button/ng-button/ng-button.component';
 import { calculatePlayerPoints, updateAttendance } from '../../lib/utils';
 import { TeamBoardComponent } from '../../shared/team-board/team-board.component';
-import { membersPlaceholder33, membersPlaceholder44 } from '../../lib/constant';
+import {
+  heroes,
+  membersPlaceholder33,
+  membersPlaceholder44,
+} from '../../lib/constant';
 
 @Component({
   selector: 'app-dashboard',
@@ -38,13 +42,15 @@ export class DashboardComponent implements OnInit {
     const statistics = await this.supabase.getPlayersByIdsWithStatistic(
       latestBoard.map((item) => item.player_id.id)
     );
-    console.log(latestBoard);
     if (latestBoard.length) {
       this.memberList = latestBoard.map((item) => ({
         id: item.player_id.id,
         name: item.player_id.name,
         hero: item.hero,
         elo: item.player_id.elo,
+        eloWithHero:
+          item.player_id.elo *
+          (heroes.find((hero) => hero.name === item.hero)?.rate || 1),
         team: +item.team,
         total_wins: statistics.find(
           (stat: any) => stat.player_id === item.player_id.id
@@ -170,7 +176,24 @@ export class DashboardComponent implements OnInit {
       1
     );
   }
-
+  getTeam1EloWithHero() {
+    return round(
+      this.getMemberTeam1().reduce(
+        (acc, member) => acc + (member.eloWithHero ?? member.elo),
+        0
+      ),
+      1
+    );
+  }
+  getTeam2EloWithHero() {
+    return round(
+      this.getMemberTeam2().reduce(
+        (acc, member) => acc + (member.eloWithHero ?? member.elo),
+        0
+      ),
+      1
+    );
+  }
   toggleManualMode(event: any) {
     this.manualMode = event.target.checked;
     this.attendance = this.attendance.map((player) => ({

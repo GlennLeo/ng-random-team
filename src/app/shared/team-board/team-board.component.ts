@@ -15,6 +15,7 @@ export class TeamBoardComponent {
   teamName = input.required<string>();
   team = input.required<number>();
   elo = input<number>();
+  eloWithHero = input<number>();
   memberList = model.required<TeamMember[]>();
   win = input(false);
   isSmall = input(false);
@@ -30,6 +31,7 @@ export class TeamBoardComponent {
       oldList[index].id = event.value.id;
       oldList[index].name = event.value.name;
       oldList[index].elo = event.value.elo;
+      oldList[index].elo = event.value.eloWithHero;
       oldList[index].total_losts = event.value.total_losts;
       oldList[index].total_wins = event.value.total_wins;
       oldList[index].win_rate = event.value.win_rate;
@@ -48,6 +50,7 @@ export class TeamBoardComponent {
     this.memberList.update((oldList) => {
       oldList[index].name = '';
       oldList[index].elo = 0;
+      oldList[index].eloWithHero = 0;
       return oldList;
     });
     this.attendance.update((oldList) => {
