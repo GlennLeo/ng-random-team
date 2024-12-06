@@ -35,7 +35,7 @@ export class PlayersComponent implements OnInit {
         this.players = data
           .filter(
             (player: any) =>
-              player.player_name !== 'Phantom' && player.total_games > 0
+              player.player_name !== 'Phantom' && player.total_games > 5
           )
           .map((player: any) => ({
             ...player,
