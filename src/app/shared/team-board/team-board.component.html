@@ -10,6 +10,12 @@
       >
         {{ elo() }}
       </span>
+      <span
+        *ngIf="eloWithHero()"
+        class="bg-gray-500 text-white text-sm font-semibold me-2 px-2.5 py-1 rounded ms-2"
+      >
+        {{ eloWithHero() }}
+      </span>
     </h1>
   </div>
   <ol class="text-center grid grid-cols-1 gap-4">

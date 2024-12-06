@@ -21,22 +21,22 @@ export const team = [
 ];
 
 export const heroes = [
-  { name: 'Egyptian', tier: 1 },
-  { name: 'Hittite', tier: 1 },
-  { name: 'Yamato', tier: 1 },
-  { name: 'Shang', tier: 1 },
-  { name: 'Phoenician', tier: 2 },
-  { name: 'Roman', tier: 2 },
-  { name: 'Assyrian', tier: 2 },
-  { name: 'Sumerian', tier: 2 },
-  { name: 'Palmyran', tier: 3 },
-  { name: 'Persian', tier: 3 },
-  { name: 'Macedonia', tier: 3 },
-  { name: 'Babylonian', tier: 3 },
-  { name: 'Minoan', tier: 4 },
-  { name: 'Choson', tier: 4 },
-  { name: 'Carthaginian', tier: 4 },
-  { name: 'Greek', tier: 4 },
+  { name: 'Egyptian', tier: 1, rate: 1.1 },
+  { name: 'Hittite', tier: 1, rate: 1.1 },
+  { name: 'Yamato', tier: 1, rate: 1.1 },
+  { name: 'Shang', tier: 1, rate: 1.1 },
+  { name: 'Phoenician', tier: 2, rate: 0.9 },
+  { name: 'Roman', tier: 2, rate: 0.9 },
+  { name: 'Assyrian', tier: 2, rate: 0.9 },
+  { name: 'Sumerian', tier: 2, rate: 0.9 },
+  { name: 'Palmyran', tier: 3, rate: 0.9 },
+  { name: 'Persian', tier: 3, rate: 0.8 },
+  { name: 'Macedonia', tier: 3, rate: 0.8 },
+  { name: 'Babylonian', tier: 3, rate: 0.8 },
+  { name: 'Minoan', tier: 4, rate: 0.7 },
+  { name: 'Choson', tier: 4, rate: 0.7 },
+  { name: 'Carthaginian', tier: 4, rate: 0.7 },
+  { name: 'Greek', tier: 4, rate: 0.7 },
 ];
 
 export const teamNames = shuffle(team.map((member) => member.name));
