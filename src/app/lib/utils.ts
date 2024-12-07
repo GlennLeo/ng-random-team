@@ -57,7 +57,8 @@ export function calculatePlayerPoints(
   winningTeam: number,
   basePoint: number = 20
 ): TeamMember[] {
-  const averagePoint = players.reduce((sum, player) => sum + player.elo, 0) / 8;
+  const averagePoint =
+    players.reduce((sum, player) => sum + player.elo, 0) / players.length;
 
   const updatedPlayers = players.map((player) => {
     let winPoint: number;
