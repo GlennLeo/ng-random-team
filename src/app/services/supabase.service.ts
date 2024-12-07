@@ -348,4 +348,17 @@ export class SupabaseService {
   async cancelSession(sessionId: number) {
     await this.deleteSessionById(sessionId);
   }
+
+  async getPlayerMannerHistory(playerId: number): Promise<any[]> {
+    const { data, error } = await this.supabase.rpc('player_manner_history', {
+      player_id_input: playerId,
+    });
+
+    if (error) {
+      console.error('Error fetching manner history:', error);
+      return [];
+    }
+
+    return data;
+  }
 }
