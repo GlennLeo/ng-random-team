@@ -43,8 +43,6 @@ export class StatisticsComponent implements OnInit {
     });
     if (this.id) {
       const data = await this.supabase.getStatisticOfPlayer(+this.id);
-      console.log({ data });
-
       if (data[0]) {
         // Map data into PlayerStatistics format
         this.statistic = {
@@ -127,8 +125,8 @@ export class StatisticsComponent implements OnInit {
       datasets: [
         {
           data: [stats.total_wins, stats.total_losts], // Values for the chart
-          backgroundColor: ['#204887', '#FFA726'], // Colors for wins and losses
-          hoverBackgroundColor: ['#183462', '#FB8C00'], // Colors on hover
+          backgroundColor: ['#204887', '#991b1b'], // Colors for wins and losses
+          hoverBackgroundColor: ['#183462', '#7f1d1d'], // Colors on hover
         },
       ],
     };
