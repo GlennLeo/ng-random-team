@@ -24,7 +24,7 @@ export class HistoryComponent implements OnInit {
   offset = 0;
   limit = LIMIT;
   total = 0;
-  player_name_search = '';
+  player_name_search: { name: string } | undefined;
   players = [] as { name: string }[];
   constructor() {}
 
@@ -55,7 +55,7 @@ export class HistoryComponent implements OnInit {
 
   async searchBoardListByPlayer() {
     const data = await this.supabase.searchBoardList({
-      playerName: this.player_name_search,
+      playerName: this.player_name_search?.name,
       offset: 0,
       limit: LIMIT,
     });
@@ -113,7 +113,7 @@ export class HistoryComponent implements OnInit {
   }
   async onPageChange(event: any) {
     const data = await this.supabase.searchBoardList({
-      playerName: this.player_name_search ?? null,
+      playerName: this.player_name_search?.name,
       offset: event.first,
       limit: event.rows,
     });
@@ -135,11 +135,13 @@ export class HistoryComponent implements OnInit {
 
   async searchHistoryByPlayer(event: any) {
     if (!event.value) return;
-    this.player_name_search = event.value.name;
+    this.player_name_search = {
+      name: event.value.name,
+    };
     this.offset = 0;
     this.limit = LIMIT;
     const data = await this.supabase.searchBoardList({
-      playerName: this.player_name_search ?? null,
+      playerName: this.player_name_search.name,
       offset: this.offset,
       limit: this.limit,
     });
