@@ -95,26 +95,26 @@ export function calculatePlayerPoints(
 }
 
 export function getGameCategory(team1: TeamMember[], team2: TeamMember[]) {
-  if (!team1 || !team2) return '';
+  if (!team1.length || !team2.length) return '';
   const total =
     team1.filter((player) => player.name !== 'Phantom').length +
     team2.filter((player) => player.name !== 'Phantom').length;
-  let category = '';
+  let category = 'Buff Elo';
   switch (total) {
     case 8:
-      '4 - 4';
+      category = '4 - 4';
       break;
     case 6:
-      '3 - 3';
+      category = '3 - 3';
       break;
     case 4:
-      '2 - 2';
+      category = '2 - 2';
       break;
     case 1:
-      'Solo';
+      category = 'Solo';
       break;
     default:
-      'Buff Elo';
+      category = 'Buff Elo';
       break;
   }
   return category;
