@@ -13,6 +13,8 @@ export function updateAttendance(
   updatedAttendance.forEach((item) => {
     if (memberIds.has(item.id)) {
       item.checked = true;
+      item.elo =
+        memberList.find((member) => member.id === item.id)?.elo ?? item.elo;
     }
   });
   return updatedAttendance;
