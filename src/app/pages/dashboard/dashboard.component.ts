@@ -279,6 +279,7 @@ export class DashboardComponent implements OnInit {
     if (statistics.length) {
       this.memberList = data.team.map((item) => ({
         ...item,
+        elo: find(statistics, (stat: any) => stat.player_id === item.id).elo,
         total_wins: find(statistics, (stat: any) => stat.player_id === item.id)
           .total_wins,
         total_losts: statistics.find((stat: any) => stat.player_id === item.id)
@@ -323,6 +324,7 @@ export class DashboardComponent implements OnInit {
     if (statistics.length) {
       this.memberList = data.team.map((item) => ({
         ...item,
+        elo: find(statistics, (stat: any) => stat.player_id === item.id).elo,
         total_wins: find(statistics, (stat: any) => stat.player_id === item.id)
           .total_wins,
         total_losts: statistics.find(
@@ -386,14 +388,17 @@ export class DashboardComponent implements OnInit {
       this.sessionId,
       this.winningTeam
     );
+    console.log('current: ', this.memberList);
     // Update elo only if no Phantom
     if (this.memberList.some((member) => member.name !== 'Phantom')) {
       const newPlayerList = calculatePlayerPoints(
         this.memberList.filter((player) => player.name !== 'Phantom'),
         this.winningTeam
       );
+      console.log({ newPlayerList });
       await this.supabase.batchUpdatePlayers(newPlayerList);
       this.memberList = newPlayerList;
+      console.log(this.memberList);
     }
     // Send notification result
     await this.playerService.sendWebhookMessageForSessionResult(
