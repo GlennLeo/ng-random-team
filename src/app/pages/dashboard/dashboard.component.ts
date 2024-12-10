@@ -269,13 +269,12 @@ export class DashboardComponent implements OnInit {
 
   async onGenTeam() {
     this.done = false;
+    const statistics = await this.supabase.getAllPlayersWithStatistic();
     const data = await this.playerService.generateTeams(
       this.getAttendance(),
       this.manualMode
     );
-    const statistics = await this.supabase.getPlayersByIdsWithStatistic(
-      data.team.map((item) => item.id)
-    );
+
     if (statistics.length) {
       this.memberList = data.team.map((item) => ({
         ...item,
