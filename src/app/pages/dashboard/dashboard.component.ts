@@ -6,7 +6,11 @@ import { CommonModule } from '@angular/common';
 import { find, round } from 'lodash';
 import { PlayersService } from '../../services/players.service';
 import { NgButtonComponent } from '../../shared/button/ng-button/ng-button.component';
-import { calculatePlayerPoints, updateAttendance } from '../../lib/utils';
+import {
+  calculatePlayerPoints,
+  syncAttendance,
+  updateAttendance,
+} from '../../lib/utils';
 import { TeamBoardComponent } from '../../shared/team-board/team-board.component';
 import {
   heroes,
@@ -102,7 +106,7 @@ export class DashboardComponent implements OnInit {
       this.sessionId = latestBoard[0]?.session_id.id;
       this.sessionStatus = latestBoard[0]?.session_id.status;
     } else {
-      this.getFromLocalData();
+      // this.getFromLocalData();
     }
   }
 
@@ -270,6 +274,7 @@ export class DashboardComponent implements OnInit {
   async onGenTeam() {
     this.done = false;
     const statistics = await this.supabase.getAllPlayersWithStatistic();
+    this.attendance = syncAttendance(this.attendance, statistics);
     const data = await this.playerService.generateTeams(
       this.getAttendance(),
       this.manualMode
@@ -389,7 +394,7 @@ export class DashboardComponent implements OnInit {
     );
     console.log('current: ', this.memberList);
     // Update elo only if no Phantom
-    if (this.memberList.some((member) => member.name !== 'Phantom')) {
+    if (this.memberList.every((member) => member.name !== 'Phantom')) {
       const newPlayerList = calculatePlayerPoints(
         this.memberList.filter((player) => player.name !== 'Phantom'),
         this.winningTeam
