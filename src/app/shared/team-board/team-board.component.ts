@@ -31,7 +31,7 @@ export class TeamBoardComponent {
       oldList[index].id = event.value.id;
       oldList[index].name = event.value.name;
       oldList[index].elo = event.value.elo;
-      oldList[index].elo = event.value.eloWithHero;
+      oldList[index].eloWithHero = event.value.eloWithHero;
       oldList[index].total_losts = event.value.total_losts;
       oldList[index].total_wins = event.value.total_wins;
       oldList[index].win_rate = event.value.win_rate;

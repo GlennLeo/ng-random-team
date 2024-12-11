@@ -1,4 +1,4 @@
-import { round } from 'lodash';
+import { find, round } from 'lodash';
 import { Attendee, TeamMember } from '../models/Player';
 
 export function updateAttendance(
@@ -18,6 +18,31 @@ export function updateAttendance(
     }
   });
   return updatedAttendance;
+}
+
+export function syncAttendance(attendance: Attendee[], playerWithStats: any[]) {
+  return attendance.map((item) => ({
+    ...item,
+    elo: find(playerWithStats, (stat: any) => stat.player_id === item.id)?.elo,
+    total_wins: find(playerWithStats, (stat: any) => stat.player_id === item.id)
+      ?.total_wins,
+    total_losts: playerWithStats.find((stat: any) => stat.player_id === item.id)
+      ?.total_losses,
+    win_rate:
+      !find(playerWithStats, (stat: any) => stat.player_id === item.id)
+        ?.total_wins ||
+      !find(playerWithStats, (stat: any) => stat.player_id === item.id)
+        ?.total_games
+        ? 0
+        : round(
+            (playerWithStats.find((stat: any) => stat.player_id === item.id)
+              ?.total_wins /
+              playerWithStats.find((stat: any) => stat.player_id === item.id)
+                ?.total_games) *
+              100,
+            1
+          ),
+  }));
 }
 
 export function formatDate(dateString: string): string {
