@@ -3,6 +3,8 @@ import { Attendee, TeamMember } from '../../models/Player';
 import { CommonModule } from '@angular/common';
 import { BadgeModule } from 'primeng/badge';
 import { DropdownModule } from 'primeng/dropdown';
+import { heroesManualPick } from '../../lib/constant';
+import { round } from 'lodash';
 
 @Component({
   selector: 'app-team-board',
@@ -21,9 +23,14 @@ export class TeamBoardComponent {
   isSmall = input(false);
   attendance = model<Attendee[]>();
   manualMode = model<boolean>(false);
+  manualHeroPick = model<boolean>(false);
 
   getAvailableAttendees() {
     return this.attendance()?.filter((item) => !item.checked) ?? [];
+  }
+
+  getHeros() {
+    return heroesManualPick;
   }
 
   onPlayerChange(event: any, index: number) {
@@ -46,6 +53,17 @@ export class TeamBoardComponent {
       });
     });
   }
+  onHeroChange(event: any, index: number) {
+    this.memberList.update((oldList) => {
+      oldList[index].hero = event.value.name;
+      oldList[index].eloWithHero = round(
+        oldList[index].elo * event.value.rate,
+        1
+      );
+      return oldList;
+    });
+  }
+
   removePlayer(name: string, index: number) {
     this.memberList.update((oldList) => {
       oldList[index].name = '';

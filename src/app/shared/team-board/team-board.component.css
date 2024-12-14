@@ -13,3 +13,12 @@
   background-color: #1e1b4b;
   position: fixed !important;
 }
+
+::ng-deep .heroDropdown .p-element.p-dropdown-label.p-inputtext {
+  font-size: 12px !important;
+  padding: 8px;
+}
+
+::ng-deep .p-dropdown .p-dropdown-trigger {
+  width: 16px;
+}
