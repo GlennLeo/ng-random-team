@@ -42,6 +42,7 @@
             [options]="getHeros()"
             optionLabel="name"
             placeholder="Chọn quân"
+            [checkmark]="true"
             (onChange)="onHeroChange($event, $index)"
             [style]="{ height: '40px', padding: '4px' }"
             [ngClass]="'heroDropdown'"
