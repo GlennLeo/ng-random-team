@@ -69,6 +69,7 @@ export class TeamBoardComponent {
       oldList[index].name = '';
       oldList[index].elo = 0;
       oldList[index].eloWithHero = 0;
+      oldList[index].hero = '';
       return oldList;
     });
     this.attendance.update((oldList) => {
