@@ -52,17 +52,21 @@ export class PlayersService {
       .filter((mem) => mem.team === 1)
       .map((person, index) => ({
         ...person,
-        eloWithHero: round(person.elo * hero1[index].rate, 1),
+        eloWithHero: person.hero.includes('(M)')
+          ? person.eloWithHero
+          : round(person.elo * hero1[index].rate, 1),
         team: 1,
-        hero: hero1[index].name,
+        hero: person.hero.includes('(M)') ? person.hero : hero1[index].name,
       })) as TeamMember[];
     let team2 = memberList
       .filter((mem) => mem.team === 2)
       .map((person, index) => ({
         ...person,
-        eloWithHero: round(person.elo * hero2[index].rate, 1),
+        eloWithHero: person.hero.includes('(M)')
+          ? person.eloWithHero
+          : round(person.elo * hero2[index].rate, 1),
         team: 2,
-        hero: hero2[index].name,
+        hero: person.hero.includes('(M)') ? person.hero : hero2[index].name,
       })) as TeamMember[];
 
     while (attempts < maxAttempts) {
@@ -72,17 +76,21 @@ export class PlayersService {
         .filter((mem) => mem.team === 1)
         .map((person, index) => ({
           ...person,
-          eloWithHero: round(person.elo * hero1[index].rate, 1),
+          eloWithHero: person.hero.includes('(M)')
+            ? person.eloWithHero
+            : round(person.elo * hero1[index].rate, 1),
           team: 1,
-          hero: hero1[index].name,
+          hero: person.hero.includes('(M)') ? person.hero : hero1[index].name,
         })) as TeamMember[];
       const team2WithHero = memberList
         .filter((mem) => mem.team === 2)
         .map((person, index) => ({
           ...person,
-          eloWithHero: round(person.elo * hero2[index].rate, 1),
+          eloWithHero: person.hero.includes('(M)')
+            ? person.eloWithHero
+            : round(person.elo * hero2[index].rate, 1),
           team: 2,
-          hero: hero2[index].name,
+          hero: person.hero.includes('(M)') ? person.hero : hero2[index].name,
         }));
       // Calculate the scores of each team
       const team1Score = team1WithHero.reduce(
@@ -185,6 +193,7 @@ export class PlayersService {
     team1: TeamMember[],
     team2: TeamMember[]
   ) => {
+    if (!team1.length || !team2.length) return;
     const now = new Date().toLocaleString('en-US', {
       timeZone: 'Asia/Bangkok',
     });

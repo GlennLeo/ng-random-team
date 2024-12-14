@@ -11,6 +11,22 @@
     ></div>
     <span class="ms-3 text-sm font-medium text-white">Chế độ thủ công</span>
   </label>
+  <label
+    *ngIf="manualMode"
+    class="ml-8 inline-flex items-center cursor-pointer mb-8"
+  >
+    <input
+      type="checkbox"
+      class="sr-only peer"
+      [disabled]="checkSessionLocked()"
+      [(ngModel)]="manualHeroPick"
+      name="manualHeroPick"
+    />
+    <div
+      class="relative w-11 h-6 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all border-gray-600 peer-checked:bg-blue-600"
+    ></div>
+    <span class="ms-3 text-sm font-medium text-white">Chọn quân thủ công</span>
+  </label>
   <div class="flex justify-center items-center gap-4 mb-8">
     <p
       class="text-6xl font-extrabold bg-gradient-to-bl from-blue-500 to-indigo-800 bg-clip-text text-transparent leading-normal"
@@ -119,6 +135,7 @@
         [memberList]="getMemberTeam1()"
         [attendance]="attendance"
         [manualMode]="manualMode"
+        [manualHeroPick]="manualHeroPick"
       ></app-team-board>
     </div>
     <!-- Player board -->
@@ -223,6 +240,7 @@
         [memberList]="getMemberTeam2()"
         [attendance]="attendance"
         [manualMode]="manualMode"
+        [manualHeroPick]="manualHeroPick"
       ></app-team-board>
     </div>
   </div>

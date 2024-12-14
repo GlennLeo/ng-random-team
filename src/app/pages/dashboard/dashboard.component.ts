@@ -50,6 +50,7 @@ export class DashboardComponent implements OnInit {
   sessionStatus = '';
   winningTeam = 0;
   manualMode = false;
+  manualHeroPick = false;
   done = false;
   lockDialogVisible = false;
 
@@ -251,6 +252,10 @@ export class DashboardComponent implements OnInit {
 
   onChangeTeamSize(event: any) {
     this.teamSize = +event.target.value;
+    this.attendance = this.attendance.map((p) => ({
+      ...p,
+      checked: false,
+    }));
     if (this.manualMode) {
       switch (this.teamSize) {
         case 8:
@@ -476,6 +481,7 @@ export class DashboardComponent implements OnInit {
 
       accept: async () => {
         await this.cancelSession();
+        this.done = true;
         this.messageService.add({
           severity: 'info',
           detail: 'Đã huỷ trận đấu',

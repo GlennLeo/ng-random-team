@@ -37,6 +37,15 @@
               {{ member.hero }}
             </p>
           </div>
+          <p-dropdown
+            *ngIf="manualHeroPick()"
+            [options]="getHeros()"
+            optionLabel="name"
+            placeholder="Chọn quân"
+            (onChange)="onHeroChange($event, $index)"
+            [style]="{ height: '40px', padding: '4px' }"
+            [ngClass]="'heroDropdown'"
+          />
         </div>
         <div class="flex flex-col">
           <div class="flex gap-4 text-sm">
@@ -95,7 +104,7 @@
       <p-dropdown
         [options]="getAvailableAttendees()"
         optionLabel="name"
-        placeholder="Select a Player"
+        placeholder="Chọn người chơi"
         (onChange)="onPlayerChange($event, $index)"
       />
     </li>

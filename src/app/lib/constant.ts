@@ -39,6 +39,26 @@ export const heroes = [
   { name: 'Greek', tier: 4, rate: 0.7 },
 ];
 
+//Hackaround to be aware of whom manually picked hero
+export const heroesManualPick = [
+  { name: 'Egyptian (M)', tier: 1, rate: 1.1 },
+  { name: 'Hittite (M)', tier: 1, rate: 1.1 },
+  { name: 'Yamato (M)', tier: 1, rate: 1.1 },
+  { name: 'Shang (M)', tier: 1, rate: 1.1 },
+  { name: 'Phoenician (M)', tier: 2, rate: 0.9 },
+  { name: 'Roman (M)', tier: 2, rate: 0.9 },
+  { name: 'Assyrian (M)', tier: 2, rate: 0.9 },
+  { name: 'Sumerian (M)', tier: 2, rate: 0.9 },
+  { name: 'Palmyran (M)', tier: 3, rate: 0.9 },
+  { name: 'Persian (M)', tier: 3, rate: 0.8 },
+  { name: 'Macedonia (M)', tier: 3, rate: 0.8 },
+  { name: 'Babylonian (M)', tier: 3, rate: 0.8 },
+  { name: 'Minoan (M)', tier: 4, rate: 0.7 },
+  { name: 'Choson (M)', tier: 4, rate: 0.7 },
+  { name: 'Carthaginian (M)', tier: 4, rate: 0.7 },
+  { name: 'Greek (M)', tier: 4, rate: 0.7 },
+];
+
 export const teamNames = shuffle(team.map((member) => member.name));
 
 export const membersPlaceholder11: TeamMember[] = [
