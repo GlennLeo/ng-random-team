@@ -6,7 +6,7 @@
       Lịch sử
     </span>
   </h2>
-  <div class="flex justify-end w-full mb-4">
+  <div class="flex justify-end w-full mb-4 gap-1">
     <p-dropdown
       [options]="players"
       [(ngModel)]="player_name_search"
@@ -16,6 +16,17 @@
       (onClear)="searchBoardListByPlayer()"
       (onChange)="searchHistoryByPlayer($event)"
       placeholder="Chọn người chơi"
+    />
+    <p-dropdown
+      *ngIf="player_name_search"
+      [options]="heros"
+      [(ngModel)]="hero_search"
+      optionLabel="name"
+      [showClear]="true"
+      [checkmark]="true"
+      (onClear)="searchBoardListByPlayer()"
+      (onChange)="searchHistoryByHero($event)"
+      placeholder="Chọn quân"
     />
   </div>
   <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
