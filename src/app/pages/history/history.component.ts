@@ -7,6 +7,7 @@ import { formatDate, getDuration } from '../../lib/utils';
 import { ChipModule } from 'primeng/chip';
 import { CommonModule } from '@angular/common';
 import { PaginatorModule } from 'primeng/paginator';
+import { heroes } from '../../lib/constant';
 
 const LIMIT = 12;
 
@@ -25,7 +26,9 @@ export class HistoryComponent implements OnInit {
   limit = LIMIT;
   total = 0;
   player_name_search: { name: string } | undefined;
+  hero_search: { name: string } | undefined;
   players = [] as { name: string }[];
+  heros = [] as { name: string }[];
   constructor() {}
 
   async ngOnInit(): Promise<void> {
@@ -34,6 +37,7 @@ export class HistoryComponent implements OnInit {
       offset: 0,
     });
     const playersData = await this.supabase.getPlayers();
+    this.heros = heroes;
     this.players =
       playersData.data?.map((player: any) => ({ name: player.name })) ?? [];
     this.boardSessions = data.map((item: any) => ({
@@ -50,12 +54,14 @@ export class HistoryComponent implements OnInit {
       duration: getDuration(item.created_at, item.updated_at),
       dealer: item.dealer,
     }));
+    console.log(this.boardSessions);
     this.total = data[0]?.total_records;
   }
 
   async searchBoardListByPlayer() {
     const data = await this.supabase.searchBoardList({
       playerName: this.player_name_search?.name,
+      hero: this.hero_search?.name,
       offset: 0,
       limit: LIMIT,
     });
@@ -114,6 +120,7 @@ export class HistoryComponent implements OnInit {
   async onPageChange(event: any) {
     const data = await this.supabase.searchBoardList({
       playerName: this.player_name_search?.name,
+      hero: this.hero_search?.name,
       offset: event.first,
       limit: event.rows,
     });
@@ -134,6 +141,7 @@ export class HistoryComponent implements OnInit {
   }
 
   async searchHistoryByPlayer(event: any) {
+    console.log('searchHistoryByPlayer', event);
     if (!event.value) return;
     this.player_name_search = {
       name: event.value.name,
@@ -142,9 +150,44 @@ export class HistoryComponent implements OnInit {
     this.limit = LIMIT;
     const data = await this.supabase.searchBoardList({
       playerName: this.player_name_search.name,
+      hero: this.hero_search?.name,
       offset: this.offset,
       limit: this.limit,
     });
+    this.boardSessions = data.map((item: any) => ({
+      id: item.session_id,
+      team: item.players.map((player: any) => ({
+        id: player.player_id,
+        name: player.name,
+        hero: player.hero,
+        elo: player.elo,
+        team: +player.team,
+      })),
+      winningTeam: item.winning_team,
+      created_at: formatDate(item.created_at),
+      duration: getDuration(item.created_at, item.updated_at),
+      dealer: item.dealer,
+    }));
+
+    this.total = data[0]?.total_records;
+  }
+
+  async searchHistoryByHero(event: any) {
+    console.log('searchHistoryByHero', event);
+    if (!event.value) return;
+    this.hero_search = {
+      name: event.value.name,
+    };
+    console.log(this.hero_search);
+    this.offset = 0;
+    this.limit = LIMIT;
+    const data = await this.supabase.searchBoardList({
+      playerName: this.player_name_search?.name,
+      hero: this.hero_search?.name,
+      offset: this.offset,
+      limit: this.limit,
+    });
+    console.log(data);
     this.boardSessions = data.map((item: any) => ({
       id: item.session_id,
       team: item.players.map((player: any) => ({

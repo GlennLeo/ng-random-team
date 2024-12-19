@@ -61,15 +61,18 @@ export class SupabaseService {
 
   async searchBoardList({
     playerName,
+    hero,
     limit,
     offset,
   }: {
     playerName?: string;
+    hero?: string;
     limit?: number;
     offset?: number;
   }) {
     const { data, error } = await this.supabase.rpc('board_history', {
       player_name_input: playerName,
+      hero_input: hero,
       page_limit: limit,
       page_offset: offset,
     });
