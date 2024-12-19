@@ -67,6 +67,7 @@ export class StatisticsComponent implements OnInit {
         this.prepareStatChartData(this.statistic);
         this.prepareStatChartOptions();
       }
+      console.log(data[0]);
 
       const mannerHistory = await this.supabase.getPlayerMannerHistory(
         +this.id

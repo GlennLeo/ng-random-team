@@ -1,6 +1,7 @@
 export interface HeroStatistic {
   hero: string;
   games_played: number;
+  wins: number;
 }
 
 export interface PlayerStatistics {
