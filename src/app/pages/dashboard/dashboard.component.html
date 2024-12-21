@@ -275,10 +275,20 @@
           <app-ng-button
             buttonText="Bỏ qua"
             buttonType="button"
-            (buttonClick)="closeModal()"
+            (buttonClick)="closeLockModal()"
           ></app-ng-button>
         </div>
       </div>
+    </ng-template>
+  </p-dialog>
+  <p-dialog
+    [(visible)]="timelineDialogVisible"
+    [modal]="true"
+    [style]="{ width: '500px' }"
+    header="Cập nhật ảnh timeline, thông số"
+  >
+    <ng-template pTemplate="content">
+      <app-timeline-upload [sessionId]="sessionId"></app-timeline-upload>
     </ng-template>
   </p-dialog>
 </form>

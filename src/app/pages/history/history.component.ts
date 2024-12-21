@@ -53,6 +53,7 @@ export class HistoryComponent implements OnInit {
       created_at: formatDate(item.created_at),
       duration: getDuration(item.created_at, item.updated_at),
       dealer: item.dealer,
+      timelines: item.timelines,
     }));
     console.log(this.boardSessions);
     this.total = data[0]?.total_records;
@@ -78,6 +79,7 @@ export class HistoryComponent implements OnInit {
       created_at: formatDate(item.created_at),
       duration: getDuration(item.created_at, item.updated_at),
       dealer: item.dealer,
+      timelines: item.timelines,
     }));
     this.total = data[0]?.total_records;
   }
@@ -137,6 +139,7 @@ export class HistoryComponent implements OnInit {
       created_at: formatDate(item.created_at),
       duration: getDuration(item.created_at, item.updated_at),
       dealer: item.dealer,
+      timelines: item.timelines,
     }));
   }
 
@@ -167,6 +170,7 @@ export class HistoryComponent implements OnInit {
       created_at: formatDate(item.created_at),
       duration: getDuration(item.created_at, item.updated_at),
       dealer: item.dealer,
+      timelines: item.timelines,
     }));
 
     this.total = data[0]?.total_records;
@@ -201,6 +205,7 @@ export class HistoryComponent implements OnInit {
       created_at: formatDate(item.created_at),
       duration: getDuration(item.created_at, item.updated_at),
       dealer: item.dealer,
+      timelines: item.timelines,
     }));
 
     this.total = data[0]?.total_records;

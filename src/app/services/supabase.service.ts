@@ -164,6 +164,41 @@ export class SupabaseService {
     return data;
   }
 
+  async getSessionDetailById(sessionId: number) {
+    if (!sessionId) {
+      return [];
+    }
+    const { data, error } = await this.supabase
+      .from('session')
+      .select(
+        `
+      id,
+      created_at,
+      updated_at,
+      winning_team,
+      status,
+      dealer,
+      timelines,
+      player_session (
+        player_id,
+        team,
+        hero,
+        player (
+          name,
+          elo
+        )
+      )
+    `
+      )
+      .eq('id', sessionId)
+      .single();
+    if (error) {
+      console.error('Error fetching player sessions:', error);
+      return [];
+    }
+    return data;
+  }
+
   async createSession() {
     const { data: userData } = await this.supabase.auth.getSession();
     const { data, error } = await this.supabase
@@ -363,5 +398,53 @@ export class SupabaseService {
     }
 
     return data;
+  }
+
+  async uploadTimelineImage({
+    filePath,
+    file,
+  }: {
+    filePath: string;
+    file: File;
+  }) {
+    try {
+      const { data, error } = await this.supabase.storage
+        .from('timeline')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false,
+        });
+
+      if (error) {
+        console.error('Upload error:', error.message);
+        throw error;
+      }
+      return data;
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      throw err;
+    }
+  }
+
+  async getImageUrl(fileName: string) {
+    const { data } = this.supabase.storage
+      .from('timeline')
+      .getPublicUrl(fileName);
+    return data;
+  }
+
+  async updateSessionTimeline(id: number, url: string) {
+    const { data: updateData, error: updateError } = await this.supabase.rpc(
+      'add_to_timelines',
+      {
+        session_id: id,
+        new_item: url,
+      }
+    );
+    if (updateError) {
+      console.error('Error updating timelines:', updateError.message);
+    } else {
+      console.log('Timelines updated successfully:', updateData);
+    }
   }
 }

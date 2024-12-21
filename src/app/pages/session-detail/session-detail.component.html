@@ -1,0 +1,43 @@
+<section class="p-8 space-y-8">
+  <article
+    *ngIf="boardSession"
+    class="bg-gray-700 p-1 rounded flex flex-col gap-2"
+  >
+    <div class="flex items-center justify-between">
+      <div class="text-white text-sm">{{ boardSession.created_at }}</div>
+      <div
+        *ngIf="boardSession.dealer"
+        class="text-white text-sm rounded p-2 bg-gray-800"
+      >
+        Dealer: {{ boardSession.dealer }}
+      </div>
+      <div class="text-white text-sm">
+        {{ boardSession.duration }}
+      </div>
+    </div>
+    <div
+      class="grid grid-cols-2 bg-gray-800 justify-center p-2 divide-x divide-gray-400 rounded w-auto flex-1 divide-opacity-40"
+    >
+      <app-board-column
+        [teamName]="'Team 1'"
+        [memberList]="getMemberTeam1(boardSession)"
+        [win]="getWinningTeam(boardSession) === 1"
+        [isSmall]="true"
+      ></app-board-column>
+      <app-board-column
+        [teamName]="'Team 2'"
+        [memberList]="getMemberTeam2(boardSession)"
+        [win]="getWinningTeam(boardSession) === 2"
+        [isSmall]="true"
+      ></app-board-column>
+    </div>
+  </article>
+  <div>
+    <h2 class="text-2xl font-extrabold text-white">Timeline</h2>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    @for (timeline of boardSession?.timelines; track $index) {
+    <p-image [src]="timeline" alt="Image" width="500px" [preview]="true" />
+    }
+  </div>
+</section>

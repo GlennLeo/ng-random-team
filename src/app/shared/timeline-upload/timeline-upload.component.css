@@ -1,0 +1,10 @@
+p-fileUpload {
+  display: block;
+}
+
+::ng-deep .p-fileupload-buttonbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+}
