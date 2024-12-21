@@ -7,4 +7,5 @@ export class BoardSession {
   created_at?: string;
   duration?: string;
   dealer?: string;
+  timelines?: string[] = [];
 }

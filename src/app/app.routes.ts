@@ -6,6 +6,7 @@ import { StatisticsComponent } from './pages/statistics/statistics.component';
 import { LayoutComponent } from './shared/layout/layout.component';
 import { AuthComponent } from './pages/auth/auth.component';
 import { AuthGuard } from './guards/AuthGard';
+import { SessionDetailComponent } from './pages/session-detail/session-detail.component';
 
 export const routes: Routes = [
   {
@@ -28,6 +29,10 @@ export const routes: Routes = [
       {
         path: 'player/:playerId',
         component: StatisticsComponent,
+      },
+      {
+        path: 'session/:sessionId',
+        component: SessionDetailComponent,
       },
     ],
   },

@@ -1,0 +1,17 @@
+<div>
+  <p-toast />
+  <p-fileUpload
+    #fileUpload
+    name="timelines[]"
+    customUpload="true"
+    (uploadHandler)="onUpload($event, fileUpload)"
+    customUpload="true"
+    [multiple]="true"
+    accept="image/*"
+    maxFileSize="1000000"
+    chooseLabel="Chọn ảnh"
+    cancelLabel="Huỷ"
+    uploadLabel="Tải lên"
+  >
+  </p-fileUpload>
+</div>

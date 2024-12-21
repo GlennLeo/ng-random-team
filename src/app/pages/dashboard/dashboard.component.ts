@@ -24,6 +24,7 @@ import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { TimelineUploadComponent } from '../../shared/timeline-upload/timeline-upload.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -37,6 +38,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
     ButtonModule,
     ConfirmDialogModule,
     ToastModule,
+    TimelineUploadComponent,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './dashboard.component.html',
@@ -53,6 +55,7 @@ export class DashboardComponent implements OnInit {
   manualHeroPick = false;
   done = false;
   lockDialogVisible = false;
+  timelineDialogVisible = false;
 
   private readonly supabase = inject(SupabaseService);
   private readonly playerService = inject(PlayersService);
@@ -318,7 +321,7 @@ export class DashboardComponent implements OnInit {
     this.sessionId = session.id;
     localStorage.setItem('sessionId', session.id);
     localStorage.setItem('memberList', JSON.stringify(this.memberList));
-    this.showModal();
+    this.showLockModal();
   }
 
   async onGenHero() {
@@ -366,7 +369,7 @@ export class DashboardComponent implements OnInit {
     this.sessionId = session.id;
     localStorage.setItem('sessionId', session.id);
     localStorage.setItem('memberList', JSON.stringify(this.memberList));
-    this.showModal();
+    this.showLockModal();
   }
 
   async onStart() {
@@ -388,6 +391,7 @@ export class DashboardComponent implements OnInit {
     // update session to finished and winning team
     await this.supabase.updateSessionStatus(this.sessionId, 'finished');
     this.sessionStatus = 'finished';
+    this.showTimelineModal();
     localStorage.removeItem('sessionId');
     localStorage.removeItem('memberList');
   }
@@ -449,17 +453,25 @@ export class DashboardComponent implements OnInit {
     return title;
   }
 
-  showModal() {
+  showLockModal() {
     this.lockDialogVisible = true;
   }
 
-  closeModal() {
+  closeLockModal() {
     this.lockDialogVisible = false;
+  }
+
+  showTimelineModal() {
+    this.timelineDialogVisible = true;
+  }
+
+  closeTimelineModal() {
+    this.timelineDialogVisible = false;
   }
 
   async startAndCloseModal() {
     await this.onStart();
-    this.closeModal();
+    this.closeLockModal();
   }
 
   async cancelSession() {
