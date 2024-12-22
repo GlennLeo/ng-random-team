@@ -69,6 +69,14 @@
         >
           Xem timeline
         </a>
+        <a
+          *ngIf="!boardSession.timelines?.length"
+          href="/session/{{ boardSession.id }}"
+          target="#"
+          class="text-blue-300 text-sm hover:text-blue-500 underline"
+        >
+          Thêm ảnh timeline
+        </a>
       </div>
     </article>
     }

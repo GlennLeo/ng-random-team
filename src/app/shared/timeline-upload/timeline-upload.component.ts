@@ -1,5 +1,5 @@
 // upload.component.ts
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, output, Output } from '@angular/core';
 import { SupabaseService } from '../../services/supabase.service';
 import { ToastModule } from 'primeng/toast';
 import { FileUploadModule } from 'primeng/fileupload';
@@ -16,6 +16,8 @@ import { CommonModule } from '@angular/common';
 })
 export class TimelineUploadComponent {
   sessionId = input.required<number>();
+  onUploadSuccess = output<string[]>();
+
   private readonly supabase = inject(SupabaseService);
   private readonly messageService = inject(MessageService);
 
@@ -31,23 +33,26 @@ export class TimelineUploadComponent {
   }
 
   async onUpload(event: any, fileUpload: any) {
+    const newUploads = [] as string[];
     try {
       const uploadPromises = event.files.map(async (file: any) => {
         // Upload file
-        await this.onUploadFile(file);
+        const data = await this.onUploadFile(file);
 
         // Get the public URL of the uploaded image
-        const image = await this.supabase.getImageUrl(file.name);
+        const image = await this.supabase.getImageUrl(data.path);
 
         // Update the session timeline with the public URL
         await this.supabase.updateSessionTimeline(
           this.sessionId(),
           image.publicUrl
         );
+        newUploads.push(image.publicUrl);
       });
 
       // Run all uploads and updates concurrently
       await Promise.all(uploadPromises);
+      this.onUploadSuccess.emit(newUploads);
       fileUpload.clear();
       // Add a success message after all operations complete
       this.messageService.add({

@@ -6,11 +6,17 @@ import { ImageModule } from 'primeng/image';
 import { BoardSession } from '../../models/Board';
 import { BoardColumnComponent } from '../../shared/board-column/board-column.component';
 import { formatDate, getDuration } from '../../lib/utils';
+import { TimelineUploadComponent } from '../../shared/timeline-upload/timeline-upload.component';
 
 @Component({
   selector: 'app-session-detail',
   standalone: true,
-  imports: [CommonModule, BoardColumnComponent, ImageModule],
+  imports: [
+    CommonModule,
+    BoardColumnComponent,
+    ImageModule,
+    TimelineUploadComponent,
+  ],
   templateUrl: './session-detail.component.html',
   styleUrl: './session-detail.component.css',
 })
@@ -19,7 +25,6 @@ export class SessionDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   id: string | number | null = null;
   boardSession: BoardSession | null = null;
-  timelines: { itemImageSrc: string; thumbnailImageSrc: string }[] | undefined;
 
   constructor() {}
 
@@ -29,7 +34,6 @@ export class SessionDetailComponent implements OnInit {
     });
     if (this.id) {
       const data = (await this.supabase.getSessionDetailById(+this.id)) as any;
-      console.log(data);
       if (data) {
         this.boardSession = {
           id: data.id,
@@ -46,11 +50,6 @@ export class SessionDetailComponent implements OnInit {
           dealer: data.dealer,
           timelines: data.timelines,
         };
-        this.timelines =
-          this.boardSession.timelines?.map((item) => ({
-            itemImageSrc: item,
-            thumbnailImageSrc: item,
-          })) ?? [];
       }
     }
     console.log(this.boardSession);
@@ -69,5 +68,14 @@ export class SessionDetailComponent implements OnInit {
   }
   getWinningTeam(boardSession: BoardSession) {
     return boardSession.winningTeam;
+  }
+
+  onUploadSuccess(event: string[]) {
+    if (this.boardSession) {
+      this.boardSession = {
+        ...this.boardSession,
+        timelines: this.boardSession?.timelines?.concat(event),
+      };
+    }
   }
 }
