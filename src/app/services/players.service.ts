@@ -219,7 +219,10 @@ export class PlayersService {
     }
   };
 
-  async sendWebhookMessageForSessionResult(winningTeam: number) {
+  async sendWebhookMessageForSessionResult(
+    winningTeam: number,
+    sessionId: number
+  ) {
     const now = new Date().toLocaleString('en-US', {
       timeZone: 'Asia/Bangkok',
     });
@@ -245,7 +248,7 @@ export class PlayersService {
         import.meta.env.NG_APP_PUBLIC_GG_KEY
       }&token=${import.meta.env.NG_APP_PUBLIC_GG_TOKEN}`;
       const message = {
-        text: `Kết thúc trận đấu: Đội *${winningTeam}* thắng! \n Xem kết quả tại: <https://ng-random-team.vercel.app/history|Balance Age>`,
+        text: `Kết thúc trận đấu: Đội *${winningTeam}* thắng! \n Xem kết quả, check timeline tại: <https://ng-random-team.vercel.app/session/${sessionId}|Balance Age - Trận đấu số ${sessionId}>`,
       };
       try {
         const response = await fetch(webhookUrl, {
