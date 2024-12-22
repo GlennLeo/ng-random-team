@@ -401,21 +401,19 @@ export class DashboardComponent implements OnInit {
       this.sessionId,
       this.winningTeam
     );
-    console.log('current: ', this.memberList);
     // Update elo only if no Phantom
     if (this.memberList.every((member) => member.name !== 'Phantom')) {
       const newPlayerList = calculatePlayerPoints(
         this.memberList.filter((player) => player.name !== 'Phantom'),
         this.winningTeam
       );
-      console.log({ newPlayerList });
       await this.supabase.batchUpdatePlayers(newPlayerList);
       this.memberList = newPlayerList;
-      console.log(this.memberList);
     }
     // Send notification result
     await this.playerService.sendWebhookMessageForSessionResult(
-      this.winningTeam
+      this.winningTeam,
+      this.sessionId
     );
     this.sessionStatus = '';
     this.done = true;
@@ -478,6 +476,7 @@ export class DashboardComponent implements OnInit {
     await this.supabase.cancelSession(this.sessionId);
     this.done = false;
     this.sessionStatus = '';
+    this.sessionId = 0;
   }
 
   onConfirmRemoveSession(event: Event) {
