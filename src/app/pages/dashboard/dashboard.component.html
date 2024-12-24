@@ -1,5 +1,5 @@
 <form #form="ngForm" class="pt-0 px-8" (ngSubmit)="onSubmit()">
-  <label class="inline-flex items-center cursor-pointer mb-8">
+  <label class="inline-flex items-center cursor-pointer mb-4">
     <input
       type="checkbox"
       class="sr-only peer"
@@ -13,7 +13,7 @@
   </label>
   <label
     *ngIf="manualMode"
-    class="ml-8 inline-flex items-center cursor-pointer mb-8"
+    class="ml-8 inline-flex items-center cursor-pointer mb-4"
   >
     <input
       type="checkbox"
@@ -27,7 +27,7 @@
     ></div>
     <span class="ms-3 text-sm font-medium text-white">Chọn quân thủ công</span>
   </label>
-  <div class="flex justify-center items-center gap-4 mb-8">
+  <div class="flex justify-center items-center gap-4 mb-2">
     <p
       class="text-6xl font-extrabold bg-gradient-to-bl from-blue-500 to-indigo-800 bg-clip-text text-transparent leading-normal"
     >
