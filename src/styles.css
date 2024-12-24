@@ -17,6 +17,7 @@ body {
   min-height: 100vh;
   height: auto;
   margin: 0;
+  padding-bottom: 50px;
   background-image: url("/images/dashboard-bg.jpg");
   background-size: cover;
   background-position: center;
