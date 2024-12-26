@@ -25,18 +25,29 @@
       [ngClass]="{ 'text-xs': isSmall() }"
     >
       <div
-        class="flex justify-center items-center px-2"
+        class="flex justify-between items-center px-2"
         [ngClass]="{ 'justify-between': isSmall() }"
       >
-        <p class="text-white">{{ member.name }}</p>
-        <span
-          class="bg-gray-700 text-yellow-300 text-sm font-semibold rounded ms-2 absolute right-0 mx-2 px-1"
-          [ngClass]="{ 'text-xs': isSmall() }"
-        >
-          <p class="text-left" [ngClass]="{ 'text-xs': isSmall() }">
-            {{ member.hero }}
-          </p>
-        </span>
+        <p class="text-white w-[80px] text-left">{{ member.name }}</p>
+        <div class="flex items-center">
+          <span
+            *ngIf="member.elo"
+            class="bg-gray-700 text-white text-sm font-semibold rounded px-1"
+            [ngClass]="{ 'text-xs': isSmall() }"
+          >
+            <p class="text-left" [ngClass]="{ 'text-xs': isSmall() }">
+              {{ member.elo }}
+            </p>
+          </span>
+          <span
+            class="bg-gray-700 text-yellow-300 text-sm font-semibold rounded ml-1 px-1"
+            [ngClass]="{ 'text-xs': isSmall() }"
+          >
+            <p class="text-left" [ngClass]="{ 'text-xs': isSmall() }">
+              {{ member.hero }}
+            </p>
+          </span>
+        </div>
       </div>
     </li>
     }
