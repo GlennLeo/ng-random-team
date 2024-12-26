@@ -51,12 +51,14 @@
           [teamName]="'Team 1'"
           [memberList]="getMemberTeam1(boardSession)"
           [win]="getWinningTeam(boardSession) === 1"
+          [elo]="getTeam1Elo(boardSession)"
           [isSmall]="true"
         ></app-board-column>
         <app-board-column
           [teamName]="'Team 2'"
           [memberList]="getMemberTeam2(boardSession)"
           [win]="getWinningTeam(boardSession) === 2"
+          [elo]="getTeam2Elo(boardSession)"
           [isSmall]="true"
         ></app-board-column>
       </div>

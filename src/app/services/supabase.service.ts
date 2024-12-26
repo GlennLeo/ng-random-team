@@ -234,6 +234,7 @@ export class SupabaseService {
         player_id: player.id,
         team: player.team,
         hero: player.hero,
+        elo: player.elo,
       }));
 
       // Batch insert into player_session
