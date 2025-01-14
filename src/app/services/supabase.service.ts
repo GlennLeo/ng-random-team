@@ -1,18 +1,24 @@
-import { inject, Injectable, NgZone } from '@angular/core';
+import { inject, Injectable, NgZone, OnDestroy } from '@angular/core';
 import {
   createClient,
   PostgrestSingleResponse,
+  RealtimeChannel,
   SupabaseClient,
 } from '@supabase/supabase-js';
 import { Player, TeamMember } from '../models/Player';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SupabaseService {
+export class SupabaseService implements OnDestroy {
   private supabase: SupabaseClient;
+  private channel: RealtimeChannel | null = null;
   private readonly ngZone = inject(NgZone);
   player = null;
+
+  private tableSubject = new Subject<any>();
+  public tableInsert$ = this.tableSubject.asObservable();
 
   constructor() {
     this.supabase = this.ngZone.runOutsideAngular(() =>
@@ -21,6 +27,37 @@ export class SupabaseService {
         import.meta.env.NG_APP_PUBLIC_SUPABASE_ANON_KEY
       )
     );
+  }
+
+  listenToTableChanges(tableName: string): void {
+    this.channel = this.supabase
+      .channel(`table-changes-${tableName}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: tableName,
+        },
+        (payload) => {
+          console.log('Change detected:', payload);
+          this.tableSubject.next(payload);
+        }
+      )
+      .subscribe((status) => {
+        console.log(`Channel subscription status: ${status}`);
+      });
+  }
+
+  unsubscribe(): void {
+    if (this.channel) {
+      this.supabase.removeChannel(this.channel);
+      this.channel = null;
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe();
   }
 
   get client(): SupabaseClient {
