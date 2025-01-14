@@ -25,6 +25,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { TimelineUploadComponent } from '../../shared/timeline-upload/timeline-upload.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -61,10 +62,37 @@ export class DashboardComponent implements OnInit {
   private readonly playerService = inject(PlayersService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
+  private tableInsertSub: Subscription | null = null;
 
   constructor() {}
 
   async ngOnInit(): Promise<void> {
+    this.supabase.listenToTableChanges('session');
+    this.tableInsertSub = this.supabase.tableInsert$.subscribe(async (data) => {
+      console.log('New data:', data);
+      if (data.eventType === 'DELETE') {
+        this.attendance = [];
+        this.memberList = [];
+        this.sessionId = 0;
+        this.sessionStatus = '';
+        this.winningTeam = 0;
+        this.done = false;
+        this.lockDialogVisible = false;
+        this.timelineDialogVisible = false;
+      }
+      await this.initialize();
+    });
+    await this.initialize();
+  }
+
+  ngOnDestroy(): void {
+    if (this.tableInsertSub) {
+      this.tableInsertSub.unsubscribe();
+    }
+    this.supabase.unsubscribe();
+  }
+
+  async initialize() {
     await this.getPlayers();
     const latestBoard = (await this.supabase.getLastedBoard()) as any[];
     const statistics = await this.supabase.getPlayersByIdsWithStatistic(
@@ -106,6 +134,7 @@ export class DashboardComponent implements OnInit {
               ),
       }));
       console.log(this.memberList);
+      this.teamSize = this.memberList.length;
       this.attendance = updateAttendance(this.attendance, this.memberList);
       this.sessionId = latestBoard[0]?.session_id.id;
       this.sessionStatus = latestBoard[0]?.session_id.status;
