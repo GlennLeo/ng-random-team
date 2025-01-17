@@ -80,7 +80,9 @@ export class DashboardComponent implements OnInit {
         this.lockDialogVisible = false;
         this.timelineDialogVisible = false;
       }
-      await this.initialize();
+      if (data.new.status === 'confirmed') {
+        await this.initialize();
+      }
     });
     await this.initialize();
   }

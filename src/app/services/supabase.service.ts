@@ -35,19 +35,7 @@ export class SupabaseService implements OnDestroy {
       .on(
         'postgres_changes',
         {
-          event: 'INSERT',
-          schema: 'public',
-          table: tableName,
-        },
-        (payload) => {
-          console.log('Change detected:', payload);
-          this.tableSubject.next(payload);
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'DELETE',
+          event: '*',
           schema: 'public',
           table: tableName,
         },
