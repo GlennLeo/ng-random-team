@@ -71,7 +71,6 @@ export class DashboardComponent implements OnInit {
     this.tableInsertSub = this.supabase.tableInsert$.subscribe(async (data) => {
       console.log('New data:', data);
       if (data.eventType === 'DELETE') {
-        this.attendance = [];
         this.memberList = [];
         this.sessionId = 0;
         this.sessionStatus = '';
