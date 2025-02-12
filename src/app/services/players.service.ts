@@ -106,6 +106,7 @@ export class PlayersService {
       if (Math.abs(team1Score - team2Score) <= maxScoreDifference) {
         team1 = team1WithHero;
         team2 = team2WithHero;
+        break;
       }
       attempts++;
       if (attempts > 1000) {
@@ -180,10 +181,55 @@ export class PlayersService {
       hero: '',
       team: 0,
     })) as TeamMember[];
-
+    attempts = 0;
     // Divide into two teams
-    const team1 = shuffledPlayers.slice(0, eachTeamCount);
-    const team2 = shuffledPlayers.slice(eachTeamCount);
+    let team1 = shuffledPlayers.slice(0, eachTeamCount);
+    let team2 = shuffledPlayers.slice(eachTeamCount);
+
+    while (attempts < maxAttempts) {
+      const hero1 = this.selectTeam();
+      const hero2 = this.selectTeam();
+      const team1WithHero = shuffledPlayers
+        .filter((mem) => mem.team === 1)
+        .map((person, index) => ({
+          ...person,
+          eloWithHero: person.hero.includes('(M)')
+            ? person.eloWithHero
+            : round(person.elo * hero1[index].rate, 1),
+          team: 1,
+          hero: person.hero.includes('(M)') ? person.hero : hero1[index].name,
+        })) as TeamMember[];
+      const team2WithHero = shuffledPlayers
+        .filter((mem) => mem.team === 2)
+        .map((person, index) => ({
+          ...person,
+          eloWithHero: person.hero.includes('(M)')
+            ? person.eloWithHero
+            : round(person.elo * hero2[index].rate, 1),
+          team: 2,
+          hero: person.hero.includes('(M)') ? person.hero : hero2[index].name,
+        }));
+      // Calculate the scores of each team
+      const team1Score = team1WithHero.reduce(
+        (sum, player) => sum + (player.eloWithHero ?? player.elo),
+        0
+      );
+      const team2Score = team2WithHero.reduce(
+        (sum, player) => sum + (player.eloWithHero ?? player.elo),
+        0
+      );
+
+      // Check if the score difference condition is met
+      if (Math.abs(team1Score - team2Score) <= maxScoreDifference) {
+        team1 = team1WithHero;
+        team2 = team2WithHero;
+        break;
+      }
+      attempts++;
+      if (attempts > 1000) {
+        maxScoreDifference = 200;
+      }
+    }
 
     return { team1, team2 };
   };
